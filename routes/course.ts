@@ -67,4 +67,17 @@ router.put("/:id", async (req, res) => {
   return res.send(course);
 });
 
+router.delete("/:id", async (req, res) => {
+  let { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(404).send({ message: "Invalid ID" });
+  }
+  let course = await CourseModel.findByIdAndDelete(id);
+  if (!course) {
+    return res.status(404).send({ message: "course not found" });
+  }
+
+  res.send(course);
+});
 export default router;

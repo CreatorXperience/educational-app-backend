@@ -63,4 +63,15 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return res.send(course);
 }));
+router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id } = req.params;
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        return res.status(404).send({ message: "Invalid ID" });
+    }
+    let course = yield course_model_1.default.findByIdAndDelete(id);
+    if (!course) {
+        return res.status(404).send({ message: "course not found" });
+    }
+    res.send(course);
+}));
 exports.default = router;

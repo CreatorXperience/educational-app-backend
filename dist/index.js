@@ -19,14 +19,3 @@ app.use("/api/courses", course_1.default);
 app.get("/", (req, res) => {
     res.send("Hello world");
 });
-let data = {
-    users: [
-        {
-            name: "The Cube",
-            age: 100,
-            complexion: "white",
-        },
-    ],
-};
-let parsedData = JSON.parse(data);
-console.log(parsedData); // {users: [   {name: The Cube,   age: 100, complexion: white  }]}
