@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import courses from "./routes/course";
 import { connectToMongoDB } from "./startup/db";
+import userRouter from "./routes/user";
 
 const app: Application = express();
 
@@ -16,6 +17,7 @@ app.listen(port, () => {
 
 app.use(express.json());
 app.use("/api/courses", courses);
+app.use("/api/users", userRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello world");
