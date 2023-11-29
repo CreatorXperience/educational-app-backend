@@ -26,6 +26,19 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     res.status(404).send({ message: "course not found" });
 }));
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id } = req.params;
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        return res.status(404).send({ message: "Invalid object id" });
+    }
+    let course = yield course_model_1.default.findById(id);
+    if (!course) {
+        return res
+            .status(404)
+            .send({ message: "The course with the specified ID doesn't exist" });
+    }
+    res.send(course);
+}));
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateCourse_1.default)(req.body);
     if (error) {

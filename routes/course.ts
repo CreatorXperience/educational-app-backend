@@ -14,6 +14,21 @@ router.get("/", async (req, res) => {
   res.status(404).send({ message: "course not found" });
 });
 
+router.get("/:id", async (req, res) => {
+  let { id } = req.params;
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(404).send({ message: "Invalid object id" });
+  }
+
+  let course = await CourseModel.findById(id);
+  if (!course) {
+    return res
+      .status(404)
+      .send({ message: "The course with the specified ID doesn't exist" });
+  }
+  res.send(course);
+});
+
 router.post("/", async (req, res) => {
   let { error } = validateCourse(req.body);
 
