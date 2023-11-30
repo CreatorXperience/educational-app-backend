@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const mongoose_1 = __importDefault(require("mongoose"));
 const course_model_1 = __importDefault(require("../models/course-model"));
-const validateCourse_1 = __importDefault(require("../utils/validateCourse"));
-const validateUpdateCourse_1 = __importDefault(require("../utils/validateUpdateCourse"));
-const createCourse_1 = __importDefault(require("../utils/createCourse"));
+const validateCourse_1 = __importDefault(require("../utils/course/validateCourse"));
+const validateUpdateCourse_1 = __importDefault(require("../utils/course/validateUpdateCourse"));
+const createCourse_1 = __importDefault(require("../utils/course/createCourse"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let courses = yield course_model_1.default.find();

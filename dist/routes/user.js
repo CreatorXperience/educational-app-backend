@@ -14,33 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userModel_1 = __importDefault(require("../models/userModel"));
-const joi_password_complexity_1 = __importDefault(require("joi-password-complexity"));
 const lodash_1 = __importDefault(require("lodash"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const joi_1 = __importDefault(require("joi"));
+const handlePasswordComplexity_1 = __importDefault(require("../utils/user/handlePasswordComplexity"));
+const validateUser_1 = __importDefault(require("../utils/user/validateUser"));
+const createUser_1 = __importDefault(require("../utils/user/createUser"));
 const router = express_1.default.Router();
-const validateUser = (userPayload) => {
-    let userSchema = joi_1.default.object({
-        fullname: joi_1.default.string().min(5).max(50).required(),
-        password: joi_1.default.string().max(500).min(10),
-        email: joi_1.default.string().required().min(5).email(),
-    });
-    return userSchema.validate(userPayload);
-};
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { error } = validateUser(req.body);
+    let { error } = (0, validateUser_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
     }
-    let passwordOptions = {
-        min: 10,
-        max: 500,
-        symbol: 1,
-        numeric: 1,
-        upperCase: 1,
-        lowerCase: 1,
-    };
-    let { error: passwordError } = (0, joi_password_complexity_1.default)(passwordOptions).validate(req.body.password);
+    let { error: passwordError } = (0, handlePasswordComplexity_1.default)(req.body.password);
     if (passwordError) {
         return res.status(404).send({ message: passwordError.details[0].message });
     }
@@ -48,11 +32,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (isUserExist.length > 0) {
         return res.send({ message: "User already exist" });
     }
-    let newUser = new userModel_1.default(lodash_1.default.pick(req.body, ["fullname", "email", "password"]));
-    let salt = yield bcryptjs_1.default.genSalt(10);
-    let passwordHash = yield bcryptjs_1.default.hash(newUser.password, salt);
-    newUser.password = passwordHash;
-    let user = yield newUser.save();
+    let user = yield (0, createUser_1.default)(req.body);
     if (user) {
         let userPayload = lodash_1.default.pick(user, ["fullname", "email"]);
         return res.send(userPayload);

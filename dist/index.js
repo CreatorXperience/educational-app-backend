@@ -17,7 +17,7 @@ app.listen(port, () => {
 });
 app.use(express_1.default.json());
 app.use("/api/courses", course_1.default);
-app.use("/api/users", user_1.default);
+app.use("/auth/users", user_1.default);
 app.get("/", (req, res) => {
     res.send("Hello world");
 });

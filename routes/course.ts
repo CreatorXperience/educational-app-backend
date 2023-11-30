@@ -1,9 +1,9 @@
 import { Router } from "express";
 import mongoose from "mongoose";
 import CourseModel from "../models/course-model";
-import validateCourse from "../utils/validateCourse";
-import validateUpdateCoursePayload from "../utils/validateUpdateCourse";
-import createCourse from "../utils/createCourse";
+import validateCourse from "../utils/course/validateCourse";
+import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
+import createCourse from "../utils/course/createCourse";
 const router = Router();
 
 router.get("/", async (req, res) => {
