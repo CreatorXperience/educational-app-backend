@@ -31,6 +31,10 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
     }
+    let isUserExist = yield userModel_1.default.find({ Email: req.body.Email });
+    if (isUserExist.length > 0) {
+        return res.send({ message: "User already exist" });
+    }
     let passwordOptions = {
         min: 10,
         max: 500,

@@ -20,8 +20,14 @@ const validateUser = (userPayload: TUser) => {
 
 router.post("/", async (req, res) => {
   let { error } = validateUser(req.body);
+
   if (error) {
     return res.status(404).send({ message: error.details[0].message });
+  }
+
+  let isUserExist = await UserModel.find({ Email: req.body.Email });
+  if (isUserExist.length > 0) {
+    return res.send({ message: "User already exist" });
   }
 
   let passwordOptions = {
@@ -44,6 +50,7 @@ router.post("/", async (req, res) => {
   let newUser = new UserModel(
     _.pick(req.body, ["Fullname", "Email", "Password"])
   );
+
   let user = await newUser.save();
 
   if (user) {
