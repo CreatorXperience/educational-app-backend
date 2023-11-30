@@ -13,8 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const config_1 = __importDefault(require("config"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validateUserAuth_1 = __importDefault(require("../utils/user/validateUserAuth"));
 const express_1 = require("express");
 const findUser_1 = __importDefault(require("../utils/user/findUser"));
@@ -28,7 +26,7 @@ const userAuth = (userPayload, res) => __awaiter(void 0, void 0, void 0, functio
     if (user) {
         let isPasswordEqual = yield bcryptjs_1.default.compare(userPayload.password, user.password);
         if (isPasswordEqual) {
-            let token = jsonwebtoken_1.default.sign({ _id: user.id }, config_1.default.get("edu-secret-key"));
+            let token = user.generateAuthToken();
             return res.header("x-auth-token", token).send("successfully logged in");
         }
         return res.status(401).send({ message: "Invalid login or password" });

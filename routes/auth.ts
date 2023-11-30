@@ -27,7 +27,7 @@ const userAuth = async (
     );
 
     if (isPasswordEqual) {
-      let token = jwt.sign({ _id: user.id }, config.get("edu-secret-key"));
+      let token = user.generateAuthToken();
       return res.header("x-auth-token", token).send("successfully logged in");
     }
     return res.status(401).send({ message: "Invalid login or password" });
