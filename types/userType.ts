@@ -1,6 +1,6 @@
 type TUser = {
-  Fullname: string;
-  Email: string;
+  fullname: string;
+  email: string;
   password: string;
 };
 
