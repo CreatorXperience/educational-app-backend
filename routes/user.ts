@@ -1,10 +1,10 @@
 import express from "express";
-import UserModel from "../models/userModel";
 import _ from "lodash";
 import complexPassword from "../utils/user/handlePasswordComplexity";
 
 import validateUser from "../utils/user/validateUser";
 import createUser from "../utils/user/createUser";
+import findUser from "../utils/user/findUser";
 
 const router = express.Router();
 
@@ -21,8 +21,8 @@ router.post("/", async (req, res) => {
     return res.status(404).send({ message: passwordError.details[0].message });
   }
 
-  let isUserExist = await UserModel.find({ email: req.body.email });
-  if (isUserExist.length > 0) {
+  let isUserExist = await findUser({ email: req.body.email });
+  if (isUserExist) {
     return res.send({ message: "User already exist" });
   }
 

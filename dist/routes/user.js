@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const userModel_1 = __importDefault(require("../models/userModel"));
 const lodash_1 = __importDefault(require("lodash"));
 const handlePasswordComplexity_1 = __importDefault(require("../utils/user/handlePasswordComplexity"));
 const validateUser_1 = __importDefault(require("../utils/user/validateUser"));
 const createUser_1 = __importDefault(require("../utils/user/createUser"));
+const findUser_1 = __importDefault(require("../utils/user/findUser"));
 const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateUser_1.default)(req.body);
@@ -28,8 +28,8 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (passwordError) {
         return res.status(404).send({ message: passwordError.details[0].message });
     }
-    let isUserExist = yield userModel_1.default.find({ email: req.body.email });
-    if (isUserExist.length > 0) {
+    let isUserExist = yield (0, findUser_1.default)({ email: req.body.email });
+    if (isUserExist) {
         return res.send({ message: "User already exist" });
     }
     let user = yield (0, createUser_1.default)(req.body);
