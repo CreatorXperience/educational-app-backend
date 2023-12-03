@@ -7,6 +7,6 @@ const express_1 = require("express");
 const userAuth_1 = __importDefault(require("../utils/user/userAuth"));
 const router = (0, express_1.Router)();
 router.post("/", (req, res) => {
-    let user = (0, userAuth_1.default)(req.body, res);
+    (0, userAuth_1.default)(req.body, res);
 });
 exports.default = router;

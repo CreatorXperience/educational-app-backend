@@ -1,20 +1,27 @@
-import { Router } from "express";
+import { Request, Router } from "express";
 import mongoose from "mongoose";
 import CourseModel from "../models/course-model";
 import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
+import courseAuth from "../middleware/course";
+import jwt, { JwtPayload } from "jsonwebtoken";
 const router = Router();
 
-router.get("/", async (req, res) => {
-  let courses = await CourseModel.find();
-  if (courses) {
-    return res.send(courses);
+router.get(
+  "/",
+  courseAuth,
+  async (req: Request & { user?: jwt.JwtPayload }, res) => {
+    let courses = await CourseModel.find();
+    if (courses) {
+      console.log(req.user);
+      return res.send(courses);
+    }
+    res.status(404).send({ message: "course not found" });
   }
-  res.status(404).send({ message: "course not found" });
-});
+);
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", courseAuth, async (req, res) => {
   let { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(404).send({ message: "Invalid object id" });
