@@ -8,20 +8,15 @@ import courseAuth from "../middleware/course";
 import jwt, { JwtPayload } from "jsonwebtoken";
 const router = Router();
 
-router.get(
-  "/",
-  courseAuth,
-  async (req: Request & { user?: jwt.JwtPayload }, res) => {
-    let courses = await CourseModel.find();
-    if (courses) {
-      console.log(req.user);
-      return res.send(courses);
-    }
-    res.status(404).send({ message: "course not found" });
+router.get("/", async (req: Request & { user?: jwt.JwtPayload }, res) => {
+  let courses = await CourseModel.find();
+  if (courses) {
+    return res.send(courses);
   }
-);
+  res.status(404).send({ message: "course not found" });
+});
 
-router.get("/:id", courseAuth, async (req, res) => {
+router.get("/:id", async (req, res) => {
   let { id } = req.params;
   if (!mongoose.isValidObjectId(id)) {
     return res.status(404).send({ message: "Invalid object id" });
@@ -36,7 +31,7 @@ router.get("/:id", courseAuth, async (req, res) => {
   res.send(course);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", courseAuth, async (req, res) => {
   let { error } = validateCourse(req.body);
 
   if (error) {
@@ -45,7 +40,7 @@ router.post("/", async (req, res) => {
   createCourse(req.body, res);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", courseAuth, async (req, res) => {
   let { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {
@@ -74,7 +69,7 @@ router.put("/:id", async (req, res) => {
   return res.send(course);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", courseAuth, async (req, res) => {
   let { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {

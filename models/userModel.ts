@@ -12,6 +12,7 @@ let userSchema = new mongoose.Schema(
     },
     password: { type: String, maxLength: 500, min: 10, required: true },
     fullname: { type: String, minLength: 5, maxLength: 50, required: true },
+    admin: { type: Boolean, required: true, default: false },
   },
   {
     methods: {
