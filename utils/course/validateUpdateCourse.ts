@@ -1,4 +1,4 @@
-import { TCourseUpdate } from "../types/courseType";
+import { TCourseUpdate } from "../../types/courseType";
 import Joi from "joi";
 
 const validateUpdateCoursePayload = (course: TCourseUpdate) => {

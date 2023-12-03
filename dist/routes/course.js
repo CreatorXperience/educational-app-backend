@@ -15,9 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const mongoose_1 = __importDefault(require("mongoose"));
 const course_model_1 = __importDefault(require("../models/course-model"));
-const validateCourse_1 = __importDefault(require("../utils/validateCourse"));
-const validateUpdateCourse_1 = __importDefault(require("../utils/validateUpdateCourse"));
-const createCourse_1 = __importDefault(require("../utils/createCourse"));
+const validateCourse_1 = __importDefault(require("../utils/course/validateCourse"));
+const validateUpdateCourse_1 = __importDefault(require("../utils/course/validateUpdateCourse"));
+const createCourse_1 = __importDefault(require("../utils/course/createCourse"));
+const course_1 = __importDefault(require("../middleware/course"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let courses = yield course_model_1.default.find();
@@ -39,14 +40,14 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     res.send(course);
 }));
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", course_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateCourse_1.default)(req.body);
     if (error) {
         return res.status(404).send(error.details[0].message);
     }
     (0, createCourse_1.default)(req.body, res);
 }));
-router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/:id", course_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
     if (!mongoose_1.default.isValidObjectId(id)) {
         return res.status(404).send({ message: "Invalid ID" });
@@ -62,5 +63,16 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(404).send("Course with the given id does not exist");
     }
     return res.send(course);
+}));
+router.delete("/:id", course_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id } = req.params;
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        return res.status(404).send({ message: "Invalid ID" });
+    }
+    let course = yield course_model_1.default.findByIdAndDelete(id);
+    if (!course) {
+        return res.status(404).send({ message: "course not found" });
+    }
+    res.send(course);
 }));
 exports.default = router;
