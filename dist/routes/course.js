@@ -21,7 +21,7 @@ const createCourse_1 = __importDefault(require("../utils/course/createCourse"));
 const course_1 = __importDefault(require("../middleware/course"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let courses = yield course_model_1.default.find();
+    let courses = yield course_model_1.default.find().sort({ "author.name": -1 });
     if (courses) {
         return res.send(courses);
     }

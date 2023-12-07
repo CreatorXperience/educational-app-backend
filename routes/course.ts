@@ -5,11 +5,11 @@ import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
 import courseAuth from "../middleware/course";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 const router = Router();
 
-router.get("/", async (req: Request & { user?: jwt.JwtPayload }, res) => {
-  let courses = await CourseModel.find();
+router.get("/", async (req: Request & { user?: JwtPayload }, res) => {
+  let courses = await CourseModel.find().sort({ "author.name": -1 });
   if (courses) {
     return res.send(courses);
   }
