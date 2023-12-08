@@ -1,7 +1,7 @@
 import express, { Request, Response, Application } from "express";
 import config from "config";
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 import { connectToMongoDB } from "./startup/db";
 import courses from "./routes/course";
 import users from "./routes/user";
@@ -9,7 +9,7 @@ import auth from "./routes/auth";
 
 const app: Application = express();
 
-const port = process.env.PORT;
+const port = config.get("port");
 
 connectToMongoDB();
 

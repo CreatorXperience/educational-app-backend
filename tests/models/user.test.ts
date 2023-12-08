@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import UserModel from "../../models/userModel";
 import jwt from "jsonwebtoken";
 import config from "config";
+
 test("expect a pass", () => {
   const newUser = new UserModel({
     _id: new mongoose.Types.ObjectId().toHexString(),

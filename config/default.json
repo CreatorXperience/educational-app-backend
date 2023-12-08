@@ -1,3 +1,5 @@
 {
-  "edu-secret-key": "EDU_SECRET_KEY"
+  "edu-secret-key": "EDU_SECRET_KEY",
+  "port": 3000,
+  "db": "mongodb+srv://EDU-BACKEND:09031216949Habeeb@cluster0.wml2gmu.mongodb.net/?retryWrites=true&w=majority"
 }
