@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
-import config from "config";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
-let uri: string = config.get("db");
-
-async function connectToMongoDB() {
+async function connectToMongoDB(mongoURI: string) {
+  if (process.env.NODE_ENV === "test") {
+    await mongoose.connect(mongoURI);
+    return;
+  }
   mongoose
-    .connect(uri)
-    .then(() => console.log(`connected successfully to ${uri}`))
+    .connect(mongoURI)
+    .then(() => console.log(`connected successfully to ${mongoURI}`))
     .catch(() => {
       console.log("error occured while connecting to mongodb");
     });

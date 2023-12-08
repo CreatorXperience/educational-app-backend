@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import UserModel from "../../models/userModel";
+import UserModel from "../../../models/userModel";
 import jwt from "jsonwebtoken";
 import config from "config";
 
@@ -9,7 +9,7 @@ test("expect a pass", () => {
     firstname: "Habeeb",
     lastname: "Muhydeen",
     password: "1234567890%Ab",
-    isAdmin: false,
+    isAdmin: true,
   });
 
   const token = newUser.generateAuthToken();

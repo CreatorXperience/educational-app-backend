@@ -14,13 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectToMongoDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const config_1 = __importDefault(require("config"));
-let uri = config_1.default.get("db");
-function connectToMongoDB() {
+function connectToMongoDB(mongoURI) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (process.env.NODE_ENV === "test") {
+            yield mongoose_1.default.connect(mongoURI);
+            return;
+        }
         mongoose_1.default
-            .connect(uri)
-            .then(() => console.log(`connected successfully to ${uri}`))
+            .connect(mongoURI)
+            .then(() => console.log(`connected successfully to ${mongoURI}`))
             .catch(() => {
             console.log("error occured while connecting to mongodb");
         });

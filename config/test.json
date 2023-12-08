@@ -1,5 +1,5 @@
 {
   "edu-secret-key": "EDU_SECRET_KEY",
-  "port": 3000,
+  "port": "3001",
   "db": "mongodb://localhost:27017"
 }

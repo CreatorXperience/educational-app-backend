@@ -8,12 +8,13 @@ import courseAuth from "../middleware/course";
 import { JwtPayload } from "jsonwebtoken";
 const router = Router();
 
-router.get("/", async (req: Request & { user?: JwtPayload }, res) => {
-  let courses = await CourseModel.find().sort({ "author.name": -1 });
+router.get("/", async (req, res) => {
+  // return res.send("go back");
+  let courses = await CourseModel.find();
   if (courses) {
     return res.send(courses);
   }
-  res.status(404).send({ message: "course not found" });
+  return res.status(404).send({ message: "course not found" });
 });
 
 router.get("/:id", async (req, res) => {
