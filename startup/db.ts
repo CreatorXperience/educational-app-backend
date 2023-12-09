@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 async function connectToMongoDB(mongoURI: string) {
-  if (process.env.NODE_ENV === "test") {
-    await mongoose.connect(mongoURI);
-    return;
-  }
   mongoose
     .connect(mongoURI)
     .then(() => console.log(`connected successfully to ${mongoURI}`))
