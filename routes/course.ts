@@ -5,7 +5,6 @@ import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
 import courseAuth from "../middleware/course";
-import { JwtPayload } from "jsonwebtoken";
 const router = Router();
 
 router.get("/", async (req, res) => {

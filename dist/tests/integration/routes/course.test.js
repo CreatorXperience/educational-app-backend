@@ -17,11 +17,6 @@ const index_1 = require("../../../index");
 const mongoose_1 = __importDefault(require("mongoose"));
 describe("/api/courses", () => {
     describe("GET /", () => {
-        beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-            // mongoServer = await MongoMemoryServer.create();
-            // const mongoUri = mongoServer.getUri();
-            // await mongoose.connect(mongoUri);
-        }));
         afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
             yield mongoose_1.default.connection.dropDatabase();
             yield mongoose_1.default.connection.close();

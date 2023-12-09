@@ -38,9 +38,11 @@ const getUri = (connect) => __awaiter(void 0, void 0, void 0, function* () {
     connect(uri);
 });
 getUri(db_1.connectToMongoDB);
-// const server = app.listen(port, () => {
-//   console.log(`it has been connected to port ${port}`);
-// });
+if (process.env.NODE_ENV !== "test") {
+    const server = app.listen(port, () => {
+        console.log(`it has been connected to port ${port}`);
+    });
+}
 if (!config_1.default.get("edu-secret-key")) {
     // throw new Error("No key provided");
     process.exit(1);

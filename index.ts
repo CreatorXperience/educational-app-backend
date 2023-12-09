@@ -31,9 +31,11 @@ const getUri = async (connect: (uri: string) => Promise<void>) => {
 
 getUri(connectToMongoDB);
 
-// const server = app.listen(port, () => {
-//   console.log(`it has been connected to port ${port}`);
-// });
+if (process.env.NODE_ENV !== "test") {
+  const server = app.listen(port, () => {
+    console.log(`it has been connected to port ${port}`);
+  });
+}
 
 if (!config.get("edu-secret-key")) {
   // throw new Error("No key provided");

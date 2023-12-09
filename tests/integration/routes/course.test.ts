@@ -4,12 +4,6 @@ import mongoose from "mongoose";
 
 describe("/api/courses", () => {
   describe("GET /", () => {
-    beforeAll(async () => {
-      // mongoServer = await MongoMemoryServer.create();
-      // const mongoUri = mongoServer.getUri();
-      // await mongoose.connect(mongoUri);
-    });
-
     afterAll(async () => {
       await mongoose.connection.dropDatabase();
       await mongoose.connection.close();
