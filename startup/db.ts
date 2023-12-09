@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 
 async function connectToMongoDB(mongoURI: string) {
   if (process.env.NODE_ENV === "test") {

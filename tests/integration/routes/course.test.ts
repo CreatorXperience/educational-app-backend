@@ -1,7 +1,6 @@
 import request from "supertest";
 import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 
 describe("/api/courses", () => {
   describe("GET /", () => {
