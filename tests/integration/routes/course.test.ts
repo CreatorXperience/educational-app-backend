@@ -72,7 +72,26 @@ describe("/api/courses", () => {
     test("should retrieve course with a given id", async () => {
       const response = await request(app).get(`/api/courses/${courseId}`);
       expect(response.status).toBe(200);
+      console.log(response.body);
       expect(response.body).toHaveProperty("_id", courseId);
+    });
+
+    test("should return 404 if passed with invalid id", async () => {
+      let invalidId = "123";
+      const response = await request(app).get(`/api/courses/${123}`);
+      expect(response.status).toBe(404);
+      expect(response.body).toMatchObject({ message: "Invalid object id" });
+    });
+
+    test("should return 404 if passed with a valid id but with data associated with the id in our database", async () => {
+      let invalidId = "65751bi3193a16af55ab7626";
+      const response = await request(app).get(`/api/courses/${123}`);
+      expect(response.status).toBe(404);
+
+      expect(response.body).toMatchObject({
+        message: "Invalid object id",
+      });
+      // expect(response.body).toHaveProperty("message", courseId);
     });
   });
 });
