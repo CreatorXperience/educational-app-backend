@@ -3,6 +3,10 @@ import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
 import insertDocInMongodbMockServer from "../../../utils/course/testsUtils/Insert";
 import TCourse from "../../../models/types/course-type";
+import UserModel from "../../../models/userModel";
+import createUser from "../../../utils/user/createUser";
+import _ from "lodash";
+import { TUser } from "../../../types/userType";
 
 const coursePayload = {
   author: {
@@ -44,6 +48,17 @@ const coursePayload = {
 };
 
 let courseId: string;
+
+const postNewUser = async (userPayload: TUser) => {
+  let user = await createUser(userPayload);
+  const res = await request(app)
+    .post("/auth/user")
+    .send(_.pick(userPayload, ["email", "password"]));
+
+  let token = res.header["x-auth-token"];
+
+  return { res, token };
+};
 
 describe("/api/courses", () => {
   beforeAll(async () => {
@@ -92,6 +107,53 @@ describe("/api/courses", () => {
         message: "Invalid object id",
       });
       // expect(response.body).toHaveProperty("message", courseId);
+    });
+  });
+
+  describe("POST /", () => {
+    test("should return a 401 error if user is not logged in", async () => {
+      const response = await request(app)
+        .post("/api/courses")
+        .send({ name: "hi" });
+
+      expect(response.status).toBe(400);
+    });
+
+    test("should return a 401 error if user is logged in but not an admin", async () => {
+      let userPayload = {
+        fullname: "Habeeb Ayinde Alabi",
+        email: "thebigboy@gmail.com",
+        password: "12345678@Ab",
+      };
+
+      let { res, token } = await postNewUser(userPayload);
+      expect(res.status).toBe(200);
+
+      const response = await request(app)
+        .post("/api/courses")
+        .send(coursePayload)
+        .set("x-auth-token", token);
+
+      expect(response.status).toBe(401);
+    });
+
+    test("should return a 404 error if user is logged in and an admin but invalid payload", async () => {
+      let userPayload = {
+        fullname: "Habeeb Ayinde Alabi",
+        email: "testUser@gmail.com",
+        password: "12345678@Ab",
+        admin: true,
+      };
+      let { res, token } = await postNewUser(userPayload);
+      expect(res.status).toBe(200);
+
+      const response = await request(app)
+        .post("/api/courses")
+        .send({ name: "test" })
+        .set("x-auth-token", token);
+
+      console.log(response.body);
+      expect(response.status).toBe(404);
     });
   });
 });

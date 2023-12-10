@@ -16,6 +16,8 @@ const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../../../index");
 const mongoose_1 = __importDefault(require("mongoose"));
 const Insert_1 = __importDefault(require("../../../utils/course/testsUtils/Insert"));
+const createUser_1 = __importDefault(require("../../../utils/user/createUser"));
+const lodash_1 = __importDefault(require("lodash"));
 const coursePayload = {
     author: {
         name: "Adam Smith",
@@ -49,6 +51,14 @@ const coursePayload = {
     stars: 3,
 };
 let courseId;
+const postNewUser = (userPayload) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield (0, createUser_1.default)(userPayload);
+    const res = yield (0, supertest_1.default)(index_1.app)
+        .post("/auth/user")
+        .send(lodash_1.default.pick(userPayload, ["email", "password"]));
+    let token = res.header["x-auth-token"];
+    return { res, token };
+});
 describe("/api/courses", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, Insert_1.default)(coursePayload);
@@ -88,6 +98,44 @@ describe("/api/courses", () => {
                 message: "Invalid object id",
             });
             // expect(response.body).toHaveProperty("message", courseId);
+        }));
+    });
+    describe("POST /", () => {
+        test("should return a 401 error if user is not logged in", () => __awaiter(void 0, void 0, void 0, function* () {
+            const response = yield (0, supertest_1.default)(index_1.app)
+                .post("/api/courses")
+                .send({ name: "hi" });
+            expect(response.status).toBe(400);
+        }));
+        test("should return a 401 error if user is logged in but not an admin", () => __awaiter(void 0, void 0, void 0, function* () {
+            let userPayload = {
+                fullname: "Habeeb Ayinde Alabi",
+                email: "thebigboy@gmail.com",
+                password: "12345678@Ab",
+            };
+            let { res, token } = yield postNewUser(userPayload);
+            expect(res.status).toBe(200);
+            const response = yield (0, supertest_1.default)(index_1.app)
+                .post("/api/courses")
+                .send(coursePayload)
+                .set("x-auth-token", token);
+            expect(response.status).toBe(401);
+        }));
+        test("should return a 404 error if user is logged in and an admin but invalid payload", () => __awaiter(void 0, void 0, void 0, function* () {
+            let userPayload = {
+                fullname: "Habeeb Ayinde Alabi",
+                email: "testUser@gmail.com",
+                password: "12345678@Ab",
+                admin: true,
+            };
+            let { res, token } = yield postNewUser(userPayload);
+            expect(res.status).toBe(200);
+            const response = yield (0, supertest_1.default)(index_1.app)
+                .post("/api/courses")
+                .send({ name: "test" })
+                .set("x-auth-token", token);
+            console.log(response.body);
+            expect(response.status).toBe(404);
         }));
     });
 });

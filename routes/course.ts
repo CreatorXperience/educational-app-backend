@@ -34,7 +34,6 @@ router.post("/", courseAuth, async (req, res) => {
   if (error) {
     return res.status(404).send(error.details[0].message);
   }
-  console.log("created");
   createCourse(req.body, res);
 });
 

@@ -43,7 +43,6 @@ router.post("/", course_1.default, (req, res) => __awaiter(void 0, void 0, void 
     if (error) {
         return res.status(404).send(error.details[0].message);
     }
-    console.log("created");
     (0, createCourse_1.default)(req.body, res);
 }));
 router.put("/:id", [course_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
