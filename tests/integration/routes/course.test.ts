@@ -43,25 +43,36 @@ const coursePayload = {
   stars: 3,
 };
 
+let courseId: string;
+
 describe("/api/courses", () => {
+  beforeAll(async () => {
+    await insertDocInMongodbMockServer(coursePayload);
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+    await mongoServer.stop();
+  });
+
   describe("GET /", () => {
-    afterAll(async () => {
-      await mongoose.connection.dropDatabase();
-      await mongoose.connection.close();
-      await mongoServer.stop();
-    });
-
-    beforeAll(async () => {
-      await insertDocInMongodbMockServer(coursePayload);
-    });
-
-    test("should return all courses", async () => {
+    test("should retrieve all courses in the DB", async () => {
       const response = await request(app).get("/api/courses");
-      console.log(response.body);
+      courseId = response.body[0]._id;
+      expect(response.status).toBe(200);
       expect(response.body.length).toBe(1);
       expect(
-        response.body.some((res: TCourse) => (res.author.name = "Adam Smith"))
+        response.body.some((res: TCourse) => res.author.name === "Adam Smith")
       ).toBeTruthy();
+    });
+  });
+
+  describe("Get /:id", () => {
+    test("should retrieve course with a given id", async () => {
+      const response = await request(app).get(`/api/courses/${courseId}`);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("_id", courseId);
     });
   });
 });

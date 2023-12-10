@@ -5,6 +5,7 @@ import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
 import courseAuth from "../middleware/course";
+
 const router = Router();
 
 router.get("/", async (req, res) => {
@@ -31,12 +32,13 @@ router.get("/:id", async (req, res) => {
   res.send(course);
 });
 
-router.post("/", courseAuth, async (req, res) => {
+router.post("/", async (req, res) => {
   let { error } = validateCourse(req.body);
 
   if (error) {
     return res.status(404).send(error.details[0].message);
   }
+  console.log("created");
   createCourse(req.body, res);
 });
 

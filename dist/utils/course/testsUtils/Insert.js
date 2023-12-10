@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const course_model_1 = __importDefault(require("../../../models/course-model"));
 const insertDocInMongodbMockServer = (CoursePayload) => __awaiter(void 0, void 0, void 0, function* () {
-    yield course_model_1.default.collection.insertOne(CoursePayload);
+    let course = new course_model_1.default(CoursePayload);
+    yield course.save();
 });
 exports.default = insertDocInMongodbMockServer;
