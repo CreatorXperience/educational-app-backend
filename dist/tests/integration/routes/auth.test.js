@@ -27,7 +27,7 @@ let userPayload = {
 describe("/auth/user", () => {
     let token;
     const registerUser = () => __awaiter(void 0, void 0, void 0, function* () {
-        let user = (0, createUser_1.default)(userPayload);
+        let user = yield (0, createUser_1.default)(userPayload);
     });
     afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
         yield mongoose_1.default.connection.dropDatabase();
@@ -68,19 +68,27 @@ describe("/auth/user", () => {
             expect(response.status).toBe(200);
         }));
         describe("POST /admin", () => {
+            let newToken;
             let newUserPayload = {
-                email: "tester@gmail.com",
-                fullname: "test user",
-                password: "12345t672As",
+                email: "tester123@gmail.com",
+                fullname: "testee do",
+                password: "1345t672Ad",
             };
             beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
-                let user = (0, createUser_1.default)(newUserPayload);
+                let user = yield (0, createUser_1.default)(newUserPayload);
                 const response = yield (0, supertest_1.default)(__1.app)
                     .post("/auth/user")
                     .send(lodash_1.default.pick(newUserPayload, ["email", "password"]));
-                token = response.header["x-auth-token"];
+                newToken = response.header["x-auth-token"];
             }));
-            test("should  return 401 response if user is not an admin", () => { });
+            test("should  return 401 response if user is not an admin", () => __awaiter(void 0, void 0, void 0, function* () {
+                let response = yield (0, supertest_1.default)(__1.app)
+                    .post("/api/courses")
+                    .set("x-auth-token", newToken)
+                    .send(coursePayload_1.default);
+                expect(response.status).toBe(401);
+                expect(response.body.message).toMatch(/unauthorized/i);
+            }));
         });
     });
 });

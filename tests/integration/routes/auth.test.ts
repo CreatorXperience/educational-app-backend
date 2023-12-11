@@ -16,7 +16,7 @@ describe("/auth/user", () => {
   let token: string;
 
   const registerUser = async () => {
-    let user = createUser(userPayload);
+    let user = await createUser(userPayload);
   };
 
   afterAll(async () => {
@@ -70,13 +70,14 @@ describe("/auth/user", () => {
     describe("POST /admin", () => {
       let newToken: string;
       let newUserPayload = {
-        email: "tester@gmail.com",
-        fullname: "test user",
-        password: "12345t672As",
+        email: "tester123@gmail.com",
+        fullname: "testee do",
+        password: "1345t672Ad",
       };
 
       beforeEach(async () => {
-        let user = createUser(newUserPayload);
+        let user = await createUser(newUserPayload);
+
         const response = await request(app)
           .post("/auth/user")
           .send(_.pick(newUserPayload, ["email", "password"]));
@@ -84,7 +85,15 @@ describe("/auth/user", () => {
         newToken = response.header["x-auth-token"];
       });
 
-      test("should  return 401 response if user is not an admin", () => {});
+      test("should  return 401 response if user is not an admin", async () => {
+        let response = await request(app)
+          .post("/api/courses")
+          .set("x-auth-token", newToken)
+          .send(coursePayload);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/unauthorized/i);
+      });
     });
   });
 });
