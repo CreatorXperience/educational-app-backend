@@ -12,7 +12,7 @@ const courseAuth = async (
   if (!token) {
     return res
       .status(401)
-      .send({ message: "Permisson denied. No token provided" });
+      .send({ message: "Permission denied. No token provided" });
   }
 
   try {
