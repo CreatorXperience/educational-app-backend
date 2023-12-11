@@ -137,7 +137,7 @@ describe("/api/courses", () => {
       // expect(response.body.message).toBe()
     });
 
-    describe("POST /", () => {
+    describe("Admin POST to /api/course", () => {
       let res: request.Response, token: string;
 
       beforeAll(async () => {
