@@ -86,7 +86,6 @@ describe("/api/courses", () => {
     test("should retrieve course with a given id", async () => {
       const response = await request(app).get(`/api/courses/${courseId}`);
       expect(response.status).toBe(200);
-      console.log(response.body);
       expect(response.body).toHaveProperty("_id", courseId);
     });
 
@@ -135,46 +134,47 @@ describe("/api/courses", () => {
         .set("x-auth-token", token);
 
       expect(response.status).toBe(401);
+      // expect(response.body.message).toBe()
     });
 
-    test("should return a 404 error if user is logged in and an admin but invalid payload", async () => {
-      let userPayload = {
-        fullname: "Habeeb Ayinde Alabi",
-        email: "testUser@gmail.com",
-        password: "12345678@Ab",
-        admin: true,
-      };
+    describe("POST /", () => {
+      let res: request.Response, token: string;
 
-      let { res, token } = await postNewUser(userPayload);
-      expect(res.status).toBe(200);
+      beforeAll(async () => {
+        let userPayload = {
+          fullname: "Habeeb Ayinde Alabi",
+          email: "testUser@gmail.com",
+          password: "12345678@Ab",
+          admin: true,
+        };
 
-      const response = await request(app)
-        .post("/api/courses")
-        .send({ name: "test" })
-        .set("x-auth-token", token);
+        let { res: Res, token: Token } = await postNewUser(userPayload);
+        res = Res;
+        token = Token;
+      });
 
-      console.log(response.body.message);
-      expect(response.body.message).toMatch(/[^. is required]/i);
-      expect(response.status).toBe(404);
-    });
-    test("should return a 200 success status if user is logged in and an admin with the valid payload", async () => {
-      let userPayload = {
-        fullname: "Habeeb Ayinde Alabi",
-        email: "newtestUser@gmail.com",
-        password: "12345678@Ab",
-        admin: true,
-      };
+      test("should return a 404 error if user is logged in and an admin but invalid payload", async () => {
+        expect(res.status).toBe(200);
 
-      let { res, token } = await postNewUser(userPayload);
-      expect(res.status).toBe(200);
+        const response = await request(app)
+          .post("/api/courses")
+          .send({ name: "test" })
+          .set("x-auth-token", token);
 
-      const response = await request(app)
-        .post("/api/courses")
-        .send(coursePayload)
-        .set("x-auth-token", token);
+        expect(response.body.message).toMatch(/[^. is required]/i);
+        expect(response.status).toBe(404);
+      });
 
-      console.log(response.body.message);
-      expect(response.status).toBe(200);
+      test("should return a 200 success status if user is logged in and an admin with the valid payload", async () => {
+        expect(res.status).toBe(200);
+
+        const response = await request(app)
+          .post("/api/courses")
+          .send(coursePayload)
+          .set("x-auth-token", token);
+
+        expect(response.status).toBe(200);
+      });
     });
   });
 });

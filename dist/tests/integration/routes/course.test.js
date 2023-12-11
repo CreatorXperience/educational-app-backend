@@ -81,7 +81,6 @@ describe("/api/courses", () => {
         test("should retrieve course with a given id", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(index_1.app).get(`/api/courses/${courseId}`);
             expect(response.status).toBe(200);
-            console.log(response.body);
             expect(response.body).toHaveProperty("_id", courseId);
         }));
         test("should return 404 if passed with invalid id", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -121,39 +120,38 @@ describe("/api/courses", () => {
                 .send(coursePayload)
                 .set("x-auth-token", token);
             expect(response.status).toBe(401);
+            // expect(response.body.message).toBe()
         }));
-        test("should return a 404 error if user is logged in and an admin but invalid payload", () => __awaiter(void 0, void 0, void 0, function* () {
-            let userPayload = {
-                fullname: "Habeeb Ayinde Alabi",
-                email: "testUser@gmail.com",
-                password: "12345678@Ab",
-                admin: true,
-            };
-            let { res, token } = yield postNewUser(userPayload);
-            expect(res.status).toBe(200);
-            const response = yield (0, supertest_1.default)(index_1.app)
-                .post("/api/courses")
-                .send({ name: "test" })
-                .set("x-auth-token", token);
-            console.log(response.body.message);
-            expect(response.body.message).toMatch(/[^. is required]/i);
-            expect(response.status).toBe(404);
-        }));
-        test("should return a 200 success status if user is logged in and an admin with the valid payload", () => __awaiter(void 0, void 0, void 0, function* () {
-            let userPayload = {
-                fullname: "Habeeb Ayinde Alabi",
-                email: "newtestUser@gmail.com",
-                password: "12345678@Ab",
-                admin: true,
-            };
-            let { res, token } = yield postNewUser(userPayload);
-            expect(res.status).toBe(200);
-            const response = yield (0, supertest_1.default)(index_1.app)
-                .post("/api/courses")
-                .send(coursePayload)
-                .set("x-auth-token", token);
-            console.log(response.body.message);
-            expect(response.status).toBe(200);
-        }));
+        describe("POST /", () => {
+            let res, token;
+            beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+                let userPayload = {
+                    fullname: "Habeeb Ayinde Alabi",
+                    email: "testUser@gmail.com",
+                    password: "12345678@Ab",
+                    admin: true,
+                };
+                let { res: Res, token: Token } = yield postNewUser(userPayload);
+                res = Res;
+                token = Token;
+            }));
+            test("should return a 404 error if user is logged in and an admin but invalid payload", () => __awaiter(void 0, void 0, void 0, function* () {
+                expect(res.status).toBe(200);
+                const response = yield (0, supertest_1.default)(index_1.app)
+                    .post("/api/courses")
+                    .send({ name: "test" })
+                    .set("x-auth-token", token);
+                expect(response.body.message).toMatch(/[^. is required]/i);
+                expect(response.status).toBe(404);
+            }));
+            test("should return a 200 success status if user is logged in and an admin with the valid payload", () => __awaiter(void 0, void 0, void 0, function* () {
+                expect(res.status).toBe(200);
+                const response = yield (0, supertest_1.default)(index_1.app)
+                    .post("/api/courses")
+                    .send(coursePayload)
+                    .set("x-auth-token", token);
+                expect(response.status).toBe(200);
+            }));
+        });
     });
 });
