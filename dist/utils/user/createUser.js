@@ -16,7 +16,7 @@ const userModel_1 = __importDefault(require("../../models/userModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const lodash_1 = __importDefault(require("lodash"));
 const createUser = (userPayload) => __awaiter(void 0, void 0, void 0, function* () {
-    let newUser = new userModel_1.default(lodash_1.default.pick(userPayload, ["fullname", "email", "password"]));
+    let newUser = new userModel_1.default(lodash_1.default.pick(userPayload, ["fullname", "email", "password", "admin"]));
     let salt = yield bcryptjs_1.default.genSalt(10);
     let passwordHash = yield bcryptjs_1.default.hash(newUser.password, salt);
     newUser.password = passwordHash;

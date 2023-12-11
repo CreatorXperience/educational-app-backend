@@ -10,7 +10,9 @@ const courseAuth = async (
 ) => {
   let token = req.header("x-auth-token");
   if (!token) {
-    return res.status(400).send({ message: "Permisson denied. Invalid token" });
+    return res
+      .status(401)
+      .send({ message: "Permisson denied. No token provided" });
   }
 
   try {

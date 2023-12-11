@@ -12,13 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const course_model_1 = __importDefault(require("../../models/course-model"));
-const createCourse = (course, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newCourse = new course_model_1.default(course);
-    const savedCourses = yield newCourse.save();
-    if (savedCourses) {
-        return res.send(savedCourses);
-    }
-    return res.status(500).send("Internal Server error");
+const course_model_1 = __importDefault(require("../../../models/course-model"));
+const insertDocInMongodbMockServer = (CoursePayload) => __awaiter(void 0, void 0, void 0, function* () {
+    let course = new course_model_1.default(CoursePayload);
+    yield course.save();
 });
-exports.default = createCourse;
+exports.default = insertDocInMongodbMockServer;

@@ -5,7 +5,7 @@ import _ from "lodash";
 
 const createUser = async (userPayload: TUser) => {
   let newUser = new UserModel(
-    _.pick(userPayload, ["fullname", "email", "password"])
+    _.pick(userPayload, ["fullname", "email", "password", "admin"])
   );
 
   let salt = await bcrypt.genSalt(10);
