@@ -28,7 +28,6 @@ const courseAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         req.user = userPayload;
         const user = yield userModel_1.default.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a._id);
         if (user === null || user === void 0 ? void 0 : user.admin) {
-            console.log("user is an admin");
             return next();
         }
         return res.status(401).send({ message: "unauthorized. user is not admin" });

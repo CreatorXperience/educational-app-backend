@@ -20,7 +20,6 @@ const courseAuth = async (
     req.user = userPayload as JwtPayload;
     const user = await UserModel.findById(req.user?._id);
     if (user?.admin) {
-      console.log("user is an admin");
       return next();
     }
 
