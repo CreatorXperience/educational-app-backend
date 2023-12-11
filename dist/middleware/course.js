@@ -19,7 +19,9 @@ const courseAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     var _a;
     let token = req.header("x-auth-token");
     if (!token) {
-        return res.status(400).send({ message: "Permisson denied. Invalid token" });
+        return res
+            .status(401)
+            .send({ message: "Permisson denied. No token provided" });
     }
     try {
         let userPayload = jsonwebtoken_1.default.verify(token, config_1.default.get("edu-secret-key"));

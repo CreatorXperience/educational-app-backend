@@ -19,6 +19,6 @@ const createCourse = (course, res) => __awaiter(void 0, void 0, void 0, function
     if (savedCourses) {
         return res.send(savedCourses);
     }
-    res.status(500).send("Internal Server error");
+    return res.status(500).send("Internal Server error");
 });
 exports.default = createCourse;

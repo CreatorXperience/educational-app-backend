@@ -32,9 +32,9 @@ router.post("/", courseAuth, async (req, res) => {
   let { error } = validateCourse(req.body);
 
   if (error) {
-    return res.status(404).send(error.details[0].message);
+    return res.status(404).send({ message: error.details[0].message });
   }
-  createCourse(req.body, res);
+  return createCourse(req.body, res);
 });
 
 router.put(

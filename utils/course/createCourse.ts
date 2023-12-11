@@ -9,7 +9,7 @@ const createCourse = async (course: TCourse, res: Response) => {
     return res.send(savedCourses);
   }
 
-  res.status(500).send("Internal Server error");
+  return res.status(500).send("Internal Server error");
 };
 
 export default createCourse;

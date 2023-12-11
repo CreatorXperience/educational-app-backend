@@ -105,7 +105,8 @@ describe("/api/courses", () => {
             const response = yield (0, supertest_1.default)(index_1.app)
                 .post("/api/courses")
                 .send({ name: "hi" });
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(401);
+            expect(response.body.message).toMatch(/no token provided/i);
         }));
         test("should return a 401 error if user is logged in but not an admin", () => __awaiter(void 0, void 0, void 0, function* () {
             let userPayload = {
@@ -134,8 +135,25 @@ describe("/api/courses", () => {
                 .post("/api/courses")
                 .send({ name: "test" })
                 .set("x-auth-token", token);
-            console.log(response.body);
+            console.log(response.body.message);
+            expect(response.body.message).toMatch(/[^. is required]/i);
             expect(response.status).toBe(404);
+        }));
+        test("should return a 200 success status if user is logged in and an admin with the valid payload", () => __awaiter(void 0, void 0, void 0, function* () {
+            let userPayload = {
+                fullname: "Habeeb Ayinde Alabi",
+                email: "newtestUser@gmail.com",
+                password: "12345678@Ab",
+                admin: true,
+            };
+            let { res, token } = yield postNewUser(userPayload);
+            expect(res.status).toBe(200);
+            const response = yield (0, supertest_1.default)(index_1.app)
+                .post("/api/courses")
+                .send(coursePayload)
+                .set("x-auth-token", token);
+            console.log(response.body.message);
+            expect(response.status).toBe(200);
         }));
     });
 });

@@ -3,7 +3,6 @@ import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
 import insertDocInMongodbMockServer from "../../../utils/course/testsUtils/Insert";
 import TCourse from "../../../models/types/course-type";
-import UserModel from "../../../models/userModel";
 import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
@@ -116,7 +115,8 @@ describe("/api/courses", () => {
         .post("/api/courses")
         .send({ name: "hi" });
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(401);
+      expect(response.body.message).toMatch(/no token provided/i);
     });
 
     test("should return a 401 error if user is logged in but not an admin", async () => {
@@ -144,6 +144,7 @@ describe("/api/courses", () => {
         password: "12345678@Ab",
         admin: true,
       };
+
       let { res, token } = await postNewUser(userPayload);
       expect(res.status).toBe(200);
 
@@ -152,8 +153,28 @@ describe("/api/courses", () => {
         .send({ name: "test" })
         .set("x-auth-token", token);
 
-      console.log(response.body);
+      console.log(response.body.message);
+      expect(response.body.message).toMatch(/[^. is required]/i);
       expect(response.status).toBe(404);
+    });
+    test("should return a 200 success status if user is logged in and an admin with the valid payload", async () => {
+      let userPayload = {
+        fullname: "Habeeb Ayinde Alabi",
+        email: "newtestUser@gmail.com",
+        password: "12345678@Ab",
+        admin: true,
+      };
+
+      let { res, token } = await postNewUser(userPayload);
+      expect(res.status).toBe(200);
+
+      const response = await request(app)
+        .post("/api/courses")
+        .send(coursePayload)
+        .set("x-auth-token", token);
+
+      console.log(response.body.message);
+      expect(response.status).toBe(200);
     });
   });
 });

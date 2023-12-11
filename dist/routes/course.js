@@ -41,9 +41,9 @@ router.get("/:id", validateId_1.default, (req, res) => __awaiter(void 0, void 0,
 router.post("/", course_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateCourse_1.default)(req.body);
     if (error) {
-        return res.status(404).send(error.details[0].message);
+        return res.status(404).send({ message: error.details[0].message });
     }
-    (0, createCourse_1.default)(req.body, res);
+    return (0, createCourse_1.default)(req.body, res);
 }));
 router.put("/:id", [course_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
