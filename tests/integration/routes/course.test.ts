@@ -174,6 +174,7 @@ describe("/api/courses", () => {
           .set("x-auth-token", token);
 
         expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty("author");
       });
     });
   });

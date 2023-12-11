@@ -151,6 +151,7 @@ describe("/api/courses", () => {
                     .send(coursePayload)
                     .set("x-auth-token", token);
                 expect(response.status).toBe(200);
+                expect(response.body).toHaveProperty("author");
             }));
         });
     });
