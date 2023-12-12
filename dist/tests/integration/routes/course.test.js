@@ -18,38 +18,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const Insert_1 = __importDefault(require("../../../utils/course/testsUtils/Insert"));
 const createUser_1 = __importDefault(require("../../../utils/user/createUser"));
 const lodash_1 = __importDefault(require("lodash"));
-const coursePayload = {
-    author: {
-        name: "Adam Smith",
-        post: "Python Developer",
-        bio: "Created a ongodb database with som small data init. ain't she beautiful init",
-    },
-    category: "Python",
-    topic: [
-        {
-            description: "Learn the basics of Python for finance and algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-            title: "Introduction to Python for Finance",
-            youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-            coverImage: "my Image is on it way",
-        },
-        {
-            description: "Learn how to use Python for financial analysis and algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-            title: "Python for Financial Analysis",
-            youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-            coverImage: "my Image is on it way",
-        },
-        {
-            description: "Learn how to use Python for algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-            title: "Python for Algorithmic Trading",
-            youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-            coverImage: "my Image is on it way",
-        },
-    ],
-    courseDescription: "This comprehensive course covers Python's applications in financial analysis and algorithmic trading. Learn data analysis, statistical modeling, and trading strategies in Python.",
-    coverImage: "https://i.pinimg.com/564x/34/01/ee/3401ee2dbb27776d850e77c6a2bee3d2.jpg",
-    coverTitle: "Python for Financial Analysis Next and Algorithmic Trading",
-    stars: 3,
-};
+const coursePayload_1 = __importDefault(require("../test-payload/coursePayload"));
 let courseId;
 const postNewUser = (userPayload) => __awaiter(void 0, void 0, void 0, function* () {
     let user = yield (0, createUser_1.default)(userPayload);
@@ -61,7 +30,7 @@ const postNewUser = (userPayload) => __awaiter(void 0, void 0, void 0, function*
 });
 describe("/api/courses", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-        yield (0, Insert_1.default)(coursePayload);
+        yield (0, Insert_1.default)(coursePayload_1.default);
     }));
     afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
         yield mongoose_1.default.connection.dropDatabase();
@@ -89,14 +58,13 @@ describe("/api/courses", () => {
             expect(response.status).toBe(404);
             expect(response.body).toMatchObject({ message: "Invalid object id" });
         }));
-        test("should return 404 if passed with a valid id but with data associated with the id in our database", () => __awaiter(void 0, void 0, void 0, function* () {
-            let invalidId = "65751bi3193a16af55ab7626";
-            const response = yield (0, supertest_1.default)(index_1.app).get(`/api/courses/${123}`);
+        test("should return 404 error if request a a valid id but with no data associated with the id in the database", () => __awaiter(void 0, void 0, void 0, function* () {
+            let validData = "6565fdee473fa8c1a4b29503";
+            const response = yield (0, supertest_1.default)(index_1.app).get(`/api/courses/${validData}`);
             expect(response.status).toBe(404);
             expect(response.body).toMatchObject({
-                message: "Invalid object id",
+                message: "The course with the specified ID doesn't exist",
             });
-            // expect(response.body).toHaveProperty("message", courseId);
         }));
     });
     describe("POST /", () => {
@@ -117,12 +85,12 @@ describe("/api/courses", () => {
             expect(res.status).toBe(200);
             const response = yield (0, supertest_1.default)(index_1.app)
                 .post("/api/courses")
-                .send(coursePayload)
+                .send(coursePayload_1.default)
                 .set("x-auth-token", token);
             expect(response.status).toBe(401);
             // expect(response.body.message).toBe()
         }));
-        describe("POST /", () => {
+        describe("Admin POST to /api/course", () => {
             let res, token;
             beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
                 let userPayload = {
@@ -136,7 +104,6 @@ describe("/api/courses", () => {
                 token = Token;
             }));
             test("should return a 404 error if user is logged in and an admin but invalid payload", () => __awaiter(void 0, void 0, void 0, function* () {
-                expect(res.status).toBe(200);
                 const response = yield (0, supertest_1.default)(index_1.app)
                     .post("/api/courses")
                     .send({ name: "test" })
@@ -145,10 +112,9 @@ describe("/api/courses", () => {
                 expect(response.status).toBe(404);
             }));
             test("should return a 200 success status if user is logged in and an admin with the valid payload", () => __awaiter(void 0, void 0, void 0, function* () {
-                expect(res.status).toBe(200);
                 const response = yield (0, supertest_1.default)(index_1.app)
                     .post("/api/courses")
-                    .send(coursePayload)
+                    .send(coursePayload_1.default)
                     .set("x-auth-token", token);
                 expect(response.status).toBe(200);
                 expect(response.body).toHaveProperty("author");

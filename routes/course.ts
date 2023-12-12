@@ -4,13 +4,12 @@ import CourseModel from "../models/course-model";
 import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
-import courseAuth from "../middleware/course";
+import courseAuth from "../middleware/courseAuth";
 import validateId from "../middleware/validateId";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  // return res.send("go back");
   let courses = await CourseModel.find();
   if (courses) {
     return res.send(courses);

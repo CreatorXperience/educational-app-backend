@@ -21,7 +21,7 @@ const courseAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     if (!token) {
         return res
             .status(401)
-            .send({ message: "Permisson denied. No token provided" });
+            .send({ message: "Permission denied. No token provided" });
     }
     try {
         let userPayload = jsonwebtoken_1.default.verify(token, config_1.default.get("edu-secret-key"));
