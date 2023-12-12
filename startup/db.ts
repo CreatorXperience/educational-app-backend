@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 
-let uri = process.env.URI as string;
-
-async function connectToMongoDB() {
+async function connectToMongoDB(mongoURI: string) {
   mongoose
-    .connect(uri)
-    .then(() => console.log("connected successfully"))
+    .connect(mongoURI)
+    .then(() => console.log(`connected successfully to ${mongoURI}`))
     .catch(() => {
       console.log("error occured while connecting to mongodb");
     });
