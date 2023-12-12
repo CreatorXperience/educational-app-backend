@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1702422714405" clover="3.2.0">
-  <project timestamp="1702422714405" name="All files">
-    <metrics statements="11" coveredstatements="11" conditionals="7" coveredconditionals="6" methods="2" coveredmethods="2" elements="20" coveredelements="19" complexity="0" loc="11" ncloc="11" packages="1" files="1" classes="1"/>
-    <file name="userModel.js" path="C:\Users\USER\Desktop\edu-backend\dist\models\userModel.js">
+<coverage generated="1702422771519" clover="3.2.0">
+  <project timestamp="1702422771519" name="All files">
+    <metrics statements="19" coveredstatements="19" conditionals="7" coveredconditionals="6" methods="3" coveredmethods="3" elements="29" coveredelements="28" complexity="0" loc="19" ncloc="19" packages="2" files="2" classes="2"/>
+    <package name="dist.models">
       <metrics statements="11" coveredstatements="11" conditionals="7" coveredconditionals="6" methods="2" coveredmethods="2"/>
-      <line num="2" count="1" type="cond" truecount="3" falsecount="0"/>
-      <line num="3" count="3" type="cond" truecount="3" falsecount="1"/>
-      <line num="5" count="1" type="stmt"/>
-      <line num="6" count="1" type="stmt"/>
-      <line num="7" count="1" type="stmt"/>
-      <line num="8" count="1" type="stmt"/>
-      <line num="9" count="1" type="stmt"/>
-      <line num="22" count="1" type="stmt"/>
-      <line num="23" count="1" type="stmt"/>
-      <line num="27" count="1" type="stmt"/>
-      <line num="28" count="1" type="stmt"/>
-    </file>
+      <file name="userModel.js" path="C:\Users\USER\Desktop\edu-backend\dist\models\userModel.js">
+        <metrics statements="11" coveredstatements="11" conditionals="7" coveredconditionals="6" methods="2" coveredmethods="2"/>
+        <line num="2" count="2" type="cond" truecount="3" falsecount="0"/>
+        <line num="3" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="models">
+      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="userModel.ts" path="C:\Users\USER\Desktop\edu-backend\models\userModel.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+      </file>
+    </package>
   </project>
 </coverage>
