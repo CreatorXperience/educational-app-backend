@@ -31,7 +31,6 @@ const rejectionHandler = winston_1.default.createLogger({
     exports.mongoServer = mongoServer = server;
 });
 if (!process.env.EDU_KEY) {
-    // throw new Error("No key provided");
     process.exit(1);
 }
 (0, express_server_routes_1.default)(app);
