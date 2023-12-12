@@ -2,11 +2,11 @@ import express, { Application } from "express";
 require("express-async-errors");
 import dotenv from "dotenv";
 dotenv.config();
-
-import routesMiddlewares from "./startup/express-server-routes";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import setupServer from "./startup/setup-server";
+
 import winston from "winston";
+import setupServer from "./startup/setup-server";
+import routesMiddlewares from "./startup/express-server-routes";
 
 const app: Application = express();
 
