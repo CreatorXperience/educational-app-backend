@@ -32,7 +32,6 @@ setupServer(app, port).then((server) => {
 });
 
 if (!process.env.EDU_KEY) {
-  // throw new Error("No key provided");
   process.exit(1);
 }
 
