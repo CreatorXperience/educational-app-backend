@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("./db");
 const getUri_1 = __importDefault(require("./getUri"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 function setupServer(app, port) {
     return __awaiter(this, void 0, void 0, function* () {
         let mongoServer = yield (0, getUri_1.default)(db_1.connectToMongoDB);

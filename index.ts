@@ -6,10 +6,15 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 
 import winston from "winston";
 import setupServer from "./startup/setup-server";
+import courses from "./routes/course";
+import users from "./routes/user";
+import auth from "./routes/auth";
+import error from "./middleware/error";
 import routesMiddlewares from "./startup/express-server-routes";
 
 const app: Application = express();
 
+app.use(express.json());
 const port = process.env.PORT;
 let mongoServer: MongoMemoryServer;
 
@@ -35,6 +40,9 @@ if (!process.env.EDU_KEY) {
   process.exit(1);
 }
 
-routesMiddlewares(app);
+app.use("/api/courses", courses);
+app.use("/auth/users", users);
+app.use("/auth/user", auth);
+app.use(error);
 
 export { app, mongoServer };
