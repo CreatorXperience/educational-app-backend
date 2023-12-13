@@ -8,12 +8,6 @@ dotenv.config();
 async function setupServer(app: Application, port: string | undefined) {
   let mongoServer: MongoMemoryServer = await getUri(connectToMongoDB);
 
-  if (process.env.NODE_ENV !== "test") {
-    app.listen(port, () => {
-      console.log(`it has been connected to port ${port}`);
-    });
-  }
-
   return mongoServer;
 }
 

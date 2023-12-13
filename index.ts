@@ -3,6 +3,7 @@ require("express-async-errors");
 import dotenv from "dotenv";
 dotenv.config();
 import { MongoMemoryServer } from "mongodb-memory-server";
+import example from "./routes/example";
 
 import winston from "winston";
 import setupServer from "./startup/setup-server";
@@ -14,7 +15,6 @@ import routesMiddlewares from "./startup/express-server-routes";
 
 const app: Application = express();
 
-app.use(express.json());
 const port = process.env.PORT;
 let mongoServer: MongoMemoryServer;
 
@@ -40,9 +40,18 @@ if (!process.env.EDU_KEY) {
   process.exit(1);
 }
 
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`it has been connected to port ${port}`);
+  });
+}
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/courses", courses);
 app.use("/auth/users", users);
 app.use("/auth/user", auth);
+app.use("/examples", example);
 app.use(error);
 
 export { app, mongoServer };

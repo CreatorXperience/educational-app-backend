@@ -19,11 +19,6 @@ dotenv_1.default.config();
 function setupServer(app, port) {
     return __awaiter(this, void 0, void 0, function* () {
         let mongoServer = yield (0, getUri_1.default)(db_1.connectToMongoDB);
-        if (process.env.NODE_ENV !== "test") {
-            app.listen(port, () => {
-                console.log(`it has been connected to port ${port}`);
-            });
-        }
         return mongoServer;
     });
 }
