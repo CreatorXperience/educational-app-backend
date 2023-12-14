@@ -7,7 +7,10 @@ const course_1 = __importDefault(require("../routes/course"));
 const user_1 = __importDefault(require("../routes/user"));
 const auth_1 = __importDefault(require("../routes/auth"));
 const error_1 = __importDefault(require("../middleware/error"));
+const express_1 = __importDefault(require("express"));
 const routesMiddlewares = (app) => {
+    app.use(express_1.default.json());
+    app.use(express_1.default.urlencoded({ extended: true }));
     app.use("/api/courses", course_1.default);
     app.use("/auth/users", user_1.default);
     app.use("/auth/user", auth_1.default);
