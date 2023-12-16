@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import TCourse from "./types/course-type";
+import { TCourse } from "./types/course-type";
 import authorSchema from "./authorSchema";
 
 let courseSchema = new mongoose.Schema<TCourse>({

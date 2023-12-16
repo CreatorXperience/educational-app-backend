@@ -2,7 +2,7 @@ import request from "supertest";
 import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
 import insertDocInMongodbMockServer from "../../../utils/course/testsUtils/Insert";
-import TCourse from "../../../models/types/course-type";
+import { TCourse } from "../../../models/types/course-type";
 import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
