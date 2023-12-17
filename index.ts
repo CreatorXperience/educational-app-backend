@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import mongoose from "mongoose";
 require("express-async-errors");
 import dotenv from "dotenv";
 dotenv.config();
@@ -13,6 +14,8 @@ const app: Application = express();
 const port = process.env.PORT;
 
 winstonErrorhandler();
+
+let connection = mongoose.connection;
 
 let mongoServer: MongoMemoryServer;
 
@@ -29,6 +32,9 @@ if (process.env.NODE_ENV !== "test") {
     console.log(`it has been connected to port ${port}`);
   });
 }
-routesMiddlewares(app);
 
+connection.on("open", () => {
+  console.log("connection is open");
+  routesMiddlewares(app);
+});
 export { app, mongoServer };

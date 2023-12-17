@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoServer = exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
 require("express-async-errors");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -15,6 +16,7 @@ const app = (0, express_1.default)();
 exports.app = app;
 const port = process.env.PORT;
 (0, winston_handler_1.default)();
+let connection = mongoose_1.default.connection;
 let mongoServer;
 (0, setup_server_1.default)(app, port).then((server) => {
     exports.mongoServer = mongoServer = server;
@@ -27,4 +29,7 @@ if (process.env.NODE_ENV !== "test") {
         console.log(`it has been connected to port ${port}`);
     });
 }
-(0, express_server_routes_1.default)(app);
+connection.on("open", () => {
+    console.log("connection is open");
+    (0, express_server_routes_1.default)(app);
+});
