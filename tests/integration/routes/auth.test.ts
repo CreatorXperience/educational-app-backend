@@ -4,7 +4,6 @@ import createUser from "../../../utils/user/createUser";
 import request from "supertest";
 import _ from "lodash";
 import coursePayload from "../test-payload/coursePayload";
-import { JwtPayload } from "jsonwebtoken";
 
 let userPayload = {
   email: "user1@gmail.com",

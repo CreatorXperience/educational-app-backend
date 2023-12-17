@@ -35,6 +35,10 @@ export const coursePayload = {
     "https://i.pinimg.com/564x/34/01/ee/3401ee2dbb27776d850e77c6a2bee3d2.jpg",
   coverTitle: "Python for Financial Analysis Next and Algorithmic Trading",
   stars: 3,
+  image: {
+    filename: "image",
+    contentType: "image/png",
+  },
 };
 
 export default coursePayload;

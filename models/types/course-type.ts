@@ -15,6 +15,11 @@ type TCourse = {
   coverImage: string;
   coverTitle: string;
   stars: number;
+  image: {
+    filename: string;
+    contentType: string;
+    date?: Date;
+  };
 };
 
 export type { TCourse };

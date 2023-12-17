@@ -22,6 +22,10 @@ const validateCourse = (course) => {
         coverImage: joi_1.default.string().required(),
         coverTitle: joi_1.default.string().required(),
         stars: joi_1.default.number().required().min(0).max(5),
+        image: joi_1.default.object({
+            filename: joi_1.default.string().required(),
+            contentType: joi_1.default.string().required(),
+        }),
     });
     return courseSchema.validate(course);
 };

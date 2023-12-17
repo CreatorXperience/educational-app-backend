@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { TCourse } from "./types/course-type";
 import authorSchema from "./authorSchema";
+import fileSchema from "./fileschema";
 
 let courseSchema = new mongoose.Schema<TCourse>({
   category: { type: String, required: true, minLength: 5, maxLength: 20 },
@@ -21,6 +22,7 @@ let courseSchema = new mongoose.Schema<TCourse>({
   coverImage: { type: String, required: true },
   coverTitle: { type: String, required: true },
   stars: { type: Number, required: true, min: 0, max: 5 },
+  image: fileSchema,
 });
 
 let CourseModel = mongoose.model("courses", courseSchema);

@@ -20,7 +20,6 @@ const createUser_1 = __importDefault(require("../utils/user/createUser"));
 const findUser_1 = __importDefault(require("../utils/user/findUser"));
 const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body);
     let { error } = (0, validateUser_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });

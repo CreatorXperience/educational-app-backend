@@ -9,7 +9,6 @@ import findUser from "../utils/user/findUser";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  console.log(req.body);
   let { error } = validateUser(req.body);
 
   if (error) {

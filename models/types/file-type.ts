@@ -1,7 +1,7 @@
 type TFile = {
   filename: string;
   contentType: string;
-  date: Date;
+  date?: Date;
 };
 
 export type { TFile };
