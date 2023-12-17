@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "test": " jest --watchAll --verbose",
-    "dev": "concurrently \"npx tsc --watch\"  \"nodemon -q  dist/index.js\" \"npm test\" "
+    "dev": "concurrently \"npx tsc --watch\"  \"nodemon -q  dist/migration/updateCourseSchema.js\" \"npm test\"  "
   },
   "keywords": [],
   "author": "",
