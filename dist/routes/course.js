@@ -37,7 +37,9 @@ router.get("/:id", validateId_1.default, (req, res) => __awaiter(void 0, void 0,
     }
     res.send(course);
 }));
-router.post("/", courseAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", [courseAuth_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let file = req.file;
+    console.log(file);
     let { error } = (0, validateCourse_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });

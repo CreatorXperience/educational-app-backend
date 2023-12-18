@@ -22,7 +22,6 @@ let courseSchema = new mongoose.Schema<TCourse>({
   coverImage: { type: String, required: true },
   coverTitle: { type: String, required: true },
   stars: { type: Number, required: true, min: 0, max: 5 },
-  image: fileSchema,
 });
 
 let CourseModel = mongoose.model("courses", courseSchema);

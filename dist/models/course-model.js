@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const authorSchema_1 = __importDefault(require("./authorSchema"));
-const fileschema_1 = __importDefault(require("./fileschema"));
 let courseSchema = new mongoose_1.default.Schema({
     category: { type: String, required: true, minLength: 5, maxLength: 20 },
     author: authorSchema_1.default,
@@ -25,7 +24,6 @@ let courseSchema = new mongoose_1.default.Schema({
     coverImage: { type: String, required: true },
     coverTitle: { type: String, required: true },
     stars: { type: Number, required: true, min: 0, max: 5 },
-    image: fileschema_1.default,
 });
 let CourseModel = mongoose_1.default.model("courses", courseSchema);
 exports.default = CourseModel;

@@ -14,6 +14,7 @@ const express_server_routes_1 = __importDefault(require("./startup/express-serve
 const winston_handler_1 = __importDefault(require("./startup/winston-handler"));
 const app = (0, express_1.default)();
 exports.app = app;
+app.set("view engine", "ejs");
 const port = process.env.PORT;
 (0, winston_handler_1.default)();
 let connection = mongoose_1.default.connection;
@@ -29,7 +30,29 @@ if (process.env.NODE_ENV !== "test") {
         console.log(`it has been connected to port ${port}`);
     });
 }
-connection.on("open", () => {
-    console.log("connection is open");
-    (0, express_server_routes_1.default)(app);
+app.get("/", (req, res) => {
+    res.render("index");
 });
+console.log("connection is open");
+connection.on("open", () => {
+    let bucket = new mongoose_1.default.mongo.GridFSBucket(connection.db);
+    // app.post(
+    //   "/api/courses",
+    //   [courseAuth, upload.single("file")],
+    //   async (req: Request, res: Response) => {
+    //     let file = req.file;
+    //     // @ts-ignore
+    //     let {fieldname, originalname,mimetype, buffer} = file as File
+    //     let coursePayload = {
+    //       ...req.body,
+    //       image: fieldname, originalname, mimetype, buffer
+    //     }
+    //     let { error } = validateCourse(coursePayload);
+    //     if (error) {
+    //       return res.status(404).send({ message: error.details[0].message });
+    //     }
+    //     return createCourse(coursePayload, res);
+    //   }
+    // );
+});
+(0, express_server_routes_1.default)(app);

@@ -27,7 +27,9 @@ router.get("/:id", validateId, async (req, res) => {
   res.send(course);
 });
 
-router.post("/", courseAuth, async (req, res) => {
+router.post("/", [courseAuth], async (req: Request, res: Response) => {
+  let file = req.file;
+  console.log(file);
   let { error } = validateCourse(req.body);
 
   if (error) {

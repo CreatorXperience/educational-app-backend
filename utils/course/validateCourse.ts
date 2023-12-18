@@ -21,10 +21,6 @@ const validateCourse = (course: TCourse) => {
     coverImage: Joi.string().required(),
     coverTitle: Joi.string().required(),
     stars: Joi.number().required().min(0).max(5),
-    image: Joi.object({
-      filename: Joi.string().required(),
-      contentType: Joi.string().required(),
-    }),
   });
 
   return courseSchema.validate(course);
