@@ -42,7 +42,7 @@ const migrateUp = () => __awaiter(void 0, void 0, void 0, function* () {
         contentType: "",
     };
     courses.forEach((course) => __awaiter(void 0, void 0, void 0, function* () {
-        course.image = imagePayload;
+        // course.image = imagePayload;
         yield course.save();
     }));
 });

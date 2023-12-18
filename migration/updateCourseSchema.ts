@@ -35,7 +35,7 @@ const migrateUp = async () => {
     contentType: "",
   };
   courses.forEach(async (course) => {
-    course.image = imagePayload;
+    // course.image = imagePayload;
     await course.save();
   });
 };

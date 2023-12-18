@@ -7,6 +7,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 let fileSchema = new mongoose_1.default.Schema({
     filename: { type: String, required: true },
     contentType: { type: String, required: true },
+    length: { type: String, required: true },
     date: { type: Date, default: Date.now },
 });
-exports.default = fileSchema;
+let FileModel = mongoose_1.default.model("courses-image", fileSchema);
+exports.default = FileModel;
