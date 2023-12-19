@@ -15,6 +15,18 @@ connection.once("open", () => {
   console.log("CONNECTION IS OPEN OOOOO");
 
   let bucket = new mongoose.mongo.GridFSBucket(connection.db);
+
+  Router.get("/:imageId", (req, res) => {
+    let { imageId } = req.params;
+    let downlaodStream = bucket.openDownloadStream(
+      new mongoose.Types.ObjectId(imageId)
+    );
+    downlaodStream.on("file", (file) => {
+      res.set("Content-Type", file.contentType);
+    });
+    downlaodStream.pipe(res);
+  });
+
   Router.post("/", upload.single("file"), async (req, res) => {
     let { file } = req;
     //   @ts-ignore
@@ -38,15 +50,16 @@ connection.once("open", () => {
       });
 
       newFile.id = uploadStream.id;
+
       let savedFile = await newFile.save();
       if (!savedFile) {
         return res.status(404).send({ message: "error while saving file" });
       }
+      res.setHeader("imageLink", uploadStream.id.toString());
       res.send({ message: "file was uploaded successfully" });
     } catch (e) {
       return res.status(404).send({ message: "error while saving", e: e });
     }
   });
 });
-
 export default Router;

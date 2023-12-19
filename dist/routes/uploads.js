@@ -24,6 +24,14 @@ const connection = mongoose_1.default.connection;
 connection.once("open", () => {
     console.log("CONNECTION IS OPEN OOOOO");
     let bucket = new mongoose_1.default.mongo.GridFSBucket(connection.db);
+    Router.get("/:imageId", (req, res) => {
+        let { imageId } = req.params;
+        let downlaodStream = bucket.openDownloadStream(new mongoose_1.default.Types.ObjectId(imageId));
+        downlaodStream.on("file", (file) => {
+            res.set("Content-Type", file.contentType);
+        });
+        downlaodStream.pipe(res);
+    });
     Router.post("/", upload.single("file"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         let { file } = req;
         //   @ts-ignore
@@ -46,6 +54,7 @@ connection.once("open", () => {
             if (!savedFile) {
                 return res.status(404).send({ message: "error while saving file" });
             }
+            res.setHeader("imageLink", uploadStream.id.toString());
             res.send({ message: "file was uploaded successfully" });
         }
         catch (e) {
