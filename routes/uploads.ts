@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import multer from "multer";
 import express from "express";
-import FileModel from "../models/fileschema";
+import FileModel from "../models/file-model";
 import { Readable } from "stream";
 
 const Router = express.Router();

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const multer_1 = __importDefault(require("multer"));
 const express_1 = __importDefault(require("express"));
-const fileschema_1 = __importDefault(require("../models/fileschema"));
+const file_model_1 = __importDefault(require("../models/file-model"));
 const stream_1 = require("stream");
 const Router = express_1.default.Router();
 let storage = multer_1.default.memoryStorage();
@@ -36,7 +36,7 @@ connection.once("open", () => {
         let { file } = req;
         //   @ts-ignore
         let { fieldname, originalname, mimetype, buffer } = file;
-        let newFile = new fileschema_1.default({
+        let newFile = new file_model_1.default({
             contentType: mimetype,
             filename: originalname,
             length: buffer.length,
