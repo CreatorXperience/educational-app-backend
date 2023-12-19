@@ -13,7 +13,6 @@ const express_server_routes_1 = __importDefault(require("./startup/express-serve
 const winston_handler_1 = __importDefault(require("./startup/winston-handler"));
 const app = (0, express_1.default)();
 exports.app = app;
-app.set("view engine", "ejs");
 const port = process.env.PORT;
 (0, winston_handler_1.default)();
 let mongoServer;
@@ -23,9 +22,6 @@ let mongoServer;
 if (!process.env.EDU_KEY) {
     process.exit(1);
 }
-app.get("/", (req, res) => {
-    res.render("index");
-});
 if (process.env.NODE_ENV !== "test") {
     app.listen(port, () => {
         console.log(`it has been connected to port ${port}`);

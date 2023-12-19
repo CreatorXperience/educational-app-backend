@@ -9,7 +9,6 @@ import routesMiddlewares from "./startup/express-server-routes";
 import winstonErrorhandler from "./startup/winston-handler";
 
 const app: Application = express();
-app.set("view engine", "ejs");
 
 const port = process.env.PORT;
 
@@ -24,10 +23,6 @@ setupServer(port).then((server) => {
 if (!process.env.EDU_KEY) {
   process.exit(1);
 }
-
-app.get("/", (req, res) => {
-  res.render("index");
-});
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
