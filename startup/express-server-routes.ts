@@ -3,6 +3,7 @@ import courses from "../routes/course";
 import upload from "../routes/uploads";
 import users from "../routes/user";
 import auth from "../routes/auth";
+import email from "../routes/sendmail";
 import error from "../middleware/error";
 import express from "express";
 
@@ -14,6 +15,7 @@ const routesMiddlewares = (app: Application) => {
   app.use("/auth/users", users);
   app.use("/auth/user", auth);
   app.use("/uploads", upload);
+  app.use("/send-email", email);
   app.use(error);
 };
 

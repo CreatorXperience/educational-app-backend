@@ -7,6 +7,7 @@ const course_1 = __importDefault(require("../routes/course"));
 const uploads_1 = __importDefault(require("../routes/uploads"));
 const user_1 = __importDefault(require("../routes/user"));
 const auth_1 = __importDefault(require("../routes/auth"));
+const sendmail_1 = __importDefault(require("../routes/sendmail"));
 const error_1 = __importDefault(require("../middleware/error"));
 const express_1 = __importDefault(require("express"));
 const routesMiddlewares = (app) => {
@@ -16,6 +17,7 @@ const routesMiddlewares = (app) => {
     app.use("/auth/users", user_1.default);
     app.use("/auth/user", auth_1.default);
     app.use("/uploads", uploads_1.default);
+    app.use("/send-email", sendmail_1.default);
     app.use(error_1.default);
 };
 exports.default = routesMiddlewares;
