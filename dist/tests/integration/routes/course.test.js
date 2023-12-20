@@ -121,24 +121,38 @@ describe("/api/courses", () => {
             }));
         });
         describe("PUT /api/courses", () => {
-            let userToken;
-            beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+            // beforeAll(async () => {
+            // });
+            const createNewUserAndUpdateCourse = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+                let { token } = yield postNewUser(payload);
+                let response = yield (0, supertest_1.default)(index_1.app)
+                    .put(`/api/courses/${courseId}`)
+                    .send({
+                    category: "Anaconda",
+                })
+                    .set("x-auth-token", token);
+                return { response };
+            });
+            test("PUT /api/courses/:id", () => __awaiter(void 0, void 0, void 0, function* () {
                 let userPayload = {
                     fullname: "tester",
                     password: "12345678As@",
                     email: "tester000@gmail.com",
                 };
-                let { token } = yield postNewUser(userPayload);
-                userToken = token;
-            }));
-            test("PUT /api/courses/:id", () => __awaiter(void 0, void 0, void 0, function* () {
-                let response = yield (0, supertest_1.default)(index_1.app)
-                    .put(`/api/courses/${courseId}`)
-                    .send({
-                    category: "Python",
-                })
-                    .set("x-auth-token", userToken);
+                const { response } = yield createNewUserAndUpdateCourse(userPayload);
+                expect(response.status).toBe(401);
                 expect(response.body.message).toMatch(/not admin/i);
+            }));
+            test("PUT /api/courses/:id return 200 if user is an admin", () => __awaiter(void 0, void 0, void 0, function* () {
+                let userPayload = {
+                    fullname: "tester",
+                    password: "12345678As@",
+                    email: "tester689@gmail.com",
+                    admin: true,
+                };
+                const { response } = yield createNewUserAndUpdateCourse(userPayload);
+                expect(response.status).toBe(200);
+                expect(response.body.modifiedCount).toBe(1);
             }));
         });
     });

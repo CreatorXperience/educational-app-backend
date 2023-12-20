@@ -136,27 +136,52 @@ describe("/api/courses", () => {
     });
 
     describe("PUT /api/courses", () => {
-      let userToken: string;
-      beforeAll(async () => {
+      // beforeAll(async () => {
+
+      // });
+
+      const createNewUserAndUpdateCourse = async (payload: {
+        fullname: string;
+        password: string;
+        email: string;
+        admin?: boolean;
+      }) => {
+        let { token } = await postNewUser(payload);
+
+        let response = await request(app)
+          .put(`/api/courses/${courseId}`)
+          .send({
+            category: "Anaconda",
+          })
+          .set("x-auth-token", token);
+
+        return { response };
+      };
+
+      test("PUT /api/courses/:id", async () => {
         let userPayload = {
           fullname: "tester",
           password: "12345678As@",
           email: "tester000@gmail.com",
         };
 
-        let { token } = await postNewUser(userPayload);
-        userToken = token;
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/not admin/i);
       });
 
-      test("PUT /api/courses/:id", async () => {
-        let response = await request(app)
-          .put(`/api/courses/${courseId}`)
-          .send({
-            category: "Python",
-          })
-          .set("x-auth-token", userToken);
+      test("PUT /api/courses/:id return 200 if user is an admin", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester689@gmail.com",
+          admin: true,
+        };
 
-        expect(response.body.message).toMatch(/not admin/i);
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+        expect(response.status).toBe(200);
+        expect(response.body.modifiedCount).toBe(1);
       });
     });
   });
