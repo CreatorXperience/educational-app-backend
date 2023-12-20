@@ -131,7 +131,7 @@ describe("/api/courses", () => {
                 let { token } = yield postNewUser(userPayload);
                 userToken = token;
             }));
-            test("PUT /api/courses", () => __awaiter(void 0, void 0, void 0, function* () {
+            test("PUT /api/courses/:id", () => __awaiter(void 0, void 0, void 0, function* () {
                 let response = yield (0, supertest_1.default)(index_1.app)
                     .put(`/api/courses/${courseId}`)
                     .send({

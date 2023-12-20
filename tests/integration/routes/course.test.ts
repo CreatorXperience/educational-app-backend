@@ -148,7 +148,7 @@ describe("/api/courses", () => {
         userToken = token;
       });
 
-      test("PUT /api/courses", async () => {
+      test("PUT /api/courses/:id", async () => {
         let response = await request(app)
           .put(`/api/courses/${courseId}`)
           .send({
