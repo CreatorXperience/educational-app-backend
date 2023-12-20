@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
-import CourseModel from "../models/course-model";
-const winston = require("winston");
+import UserModel from "../models/userModel";
+import winston from "winston";
+import dotenv from "dotenv";
+dotenv.config();
 
 const migrateErrorLogger = winston.createLogger({
   level: "info",
@@ -10,6 +12,7 @@ const migrateErrorLogger = winston.createLogger({
 });
 
 const URI = process.env.URI as string;
+console.log(URI);
 const updateCourseSchema = () => {
   mongoose
     .connect(URI)
@@ -29,21 +32,22 @@ const updateCourseSchema = () => {
 };
 
 const migrateUp = async () => {
-  let courses = await CourseModel.find({ image: { $exists: false } });
-  let imagePayload = {
-    filename: "",
-    contentType: "",
-  };
-  courses.forEach(async (course) => {
-    // course.image = imagePayload;
-    await course.save();
-  });
+  let users = await UserModel.find({ verified: { $exists: false } });
+
+  if (users) {
+    return users.forEach(async (user) => {
+      user.verified = "false";
+      await user.save();
+    });
+  }
+
+  return;
 };
 
 const migrateDown = async () => {
-  let courses = await CourseModel.updateMany(
-    { image: { $exists: true } },
-    { $unset: { image: "" } }
+  let user = await UserModel.updateMany(
+    { verified: { $exists: true } },
+    { $unset: { verified: "" } }
   );
 };
 

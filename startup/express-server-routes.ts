@@ -4,6 +4,7 @@ import upload from "../routes/uploads";
 import users from "../routes/user";
 import auth from "../routes/auth";
 import email from "../routes/sendmail";
+import verifyEmail from "../routes/verify-email";
 import error from "../middleware/error";
 import express from "express";
 
@@ -16,6 +17,7 @@ const routesMiddlewares = (app: Application) => {
   app.use("/auth/user", auth);
   app.use("/uploads", upload);
   app.use("/send-email", email);
+  app.use("/verify-email", verifyEmail);
   app.use(error);
 };
 

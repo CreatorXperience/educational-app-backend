@@ -14,11 +14,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const lodash_1 = __importDefault(require("lodash"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const handlePasswordComplexity_1 = __importDefault(require("../utils/user/handlePasswordComplexity"));
 const validateUser_1 = __importDefault(require("../utils/user/validateUser"));
 const createUser_1 = __importDefault(require("../utils/user/createUser"));
 const findUser_1 = __importDefault(require("../utils/user/findUser"));
+const verification_email_1 = __importDefault(require("../models/verification-email"));
+dotenv_1.default.config();
 const router = express_1.default.Router();
+const verifyEmailAddress = (email, res, id) => __awaiter(void 0, void 0, void 0, function* () {
+    let transporter = nodemailer_1.default.createTransport({
+        service: "gmail",
+        secure: true,
+        auth: {
+            user: process.env.GMAIL_ACC,
+            pass: process.env.GMAIL_PASS,
+        },
+    });
+    let otp = Math.floor(1000 + Math.random() * 9000);
+    const mailOptions = {
+        from: process.env.GMAIL_ACC,
+        to: email,
+        subject: `Verify Email`,
+        text: `Verify your email with this otp:  ${otp} if you didn't request for this otp you can safely ignore it. `,
+    };
+    transporter.sendMail(mailOptions, (err, data) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(404).send({ message: err });
+        }
+        let salt = yield bcryptjs_1.default.genSalt();
+        let hashedPassword = yield bcryptjs_1.default.hash(otp.toString(), salt);
+        let oneTimeModel = new verification_email_1.default({
+            otp: hashedPassword,
+            userId: id,
+        });
+        yield oneTimeModel.save();
+    }));
+});
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateUser_1.default)(req.body);
     if (error) {
@@ -34,7 +68,8 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     let user = yield (0, createUser_1.default)(req.body);
     if (user) {
-        let userPayload = lodash_1.default.pick(user, ["fullname", "email"]);
+        let userPayload = lodash_1.default.pick(user, ["fullname", "email", "_id"]);
+        yield verifyEmailAddress(userPayload.email, res, userPayload._id.toHexString());
         return res.send(userPayload);
     }
     res.status(500).send("Internal Server Error");

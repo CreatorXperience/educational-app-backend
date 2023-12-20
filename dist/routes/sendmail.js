@@ -12,12 +12,12 @@ Router.post("/", (req, res) => {
         service: "gmail",
         secure: true,
         auth: {
-            user: "allyearmustobey@gmail.com",
-            pass: "hqjouiqvqywakecc",
+            user: process.env.GMAIL_ACC,
+            pass: process.env.GMAIL_PASS,
         },
     });
     const mailOption = {
-        from: "allyearmustobey@gmail.com",
+        from: process.env.GMAIL_ACC,
         to: recipient,
         subject,
         text: "Hello This is just for testing purposes",

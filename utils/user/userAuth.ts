@@ -23,7 +23,9 @@ const userAuth = async (
 
     if (isPasswordEqual) {
       let token = user.generateAuthToken();
-      return res.header("x-auth-token", token).send("successfully logged in");
+      return res.header("x-auth-token", token).send({
+        userId: user._id,
+      });
     }
     return res.status(401).send({ message: "Invalid login or password" });
   }

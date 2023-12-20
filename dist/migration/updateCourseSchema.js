@@ -13,15 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const course_model_1 = __importDefault(require("../models/course-model"));
-const winston = require("winston");
-const migrateErrorLogger = winston.createLogger({
+const userModel_1 = __importDefault(require("../models/userModel"));
+const winston_1 = __importDefault(require("winston"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const migrateErrorLogger = winston_1.default.createLogger({
     level: "info",
     exceptionHandlers: [
-        new winston.transports.File({ filename: "migration.log" }),
+        new winston_1.default.transports.File({ filename: "migration.log" }),
     ],
 });
 const URI = process.env.URI;
+console.log(URI);
 const updateCourseSchema = () => {
     mongoose_1.default
         .connect(URI)
@@ -36,17 +39,16 @@ const updateCourseSchema = () => {
     });
 };
 const migrateUp = () => __awaiter(void 0, void 0, void 0, function* () {
-    let courses = yield course_model_1.default.find({ image: { $exists: false } });
-    let imagePayload = {
-        filename: "",
-        contentType: "",
-    };
-    courses.forEach((course) => __awaiter(void 0, void 0, void 0, function* () {
-        // course.image = imagePayload;
-        yield course.save();
-    }));
+    let users = yield userModel_1.default.find({ verified: { $exists: false } });
+    if (users) {
+        return users.forEach((user) => __awaiter(void 0, void 0, void 0, function* () {
+            user.verified = "false";
+            yield user.save();
+        }));
+    }
+    return;
 });
 const migrateDown = () => __awaiter(void 0, void 0, void 0, function* () {
-    let courses = yield course_model_1.default.updateMany({ image: { $exists: true } }, { $unset: { image: "" } });
+    let user = yield userModel_1.default.updateMany({ verified: { $exists: true } }, { $unset: { verified: "" } });
 });
 updateCourseSchema();
