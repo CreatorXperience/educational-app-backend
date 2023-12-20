@@ -44,10 +44,6 @@ router.put(
   async (req: Request, res: Response) => {
     let { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
-
     let { error } = validateUpdateCoursePayload(req.body);
 
     if (error) {
@@ -77,9 +73,6 @@ router.delete(
   async (req: Request, res: Response) => {
     let { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
     let course = await CourseModel.findByIdAndDelete(id);
     if (!course) {
       return res.status(404).send({ message: "course not found" });

@@ -121,19 +121,18 @@ describe("/api/courses", () => {
             }));
         });
         describe("PUT /api/courses", () => {
-            // beforeAll(async () => {
-            // });
-            const createNewUserAndUpdateCourse = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+            beforeAll(() => __awaiter(void 0, void 0, void 0, function* () { }));
+            const createNewUserAndUpdateCourse = (payload, id = courseId) => __awaiter(void 0, void 0, void 0, function* () {
                 let { token } = yield postNewUser(payload);
                 let response = yield (0, supertest_1.default)(index_1.app)
-                    .put(`/api/courses/${courseId}`)
+                    .put(`/api/courses/${id}`)
                     .send({
                     category: "Anaconda",
                 })
                     .set("x-auth-token", token);
                 return { response };
             });
-            test("PUT /api/courses/:id", () => __awaiter(void 0, void 0, void 0, function* () {
+            test("PUT /api/courses/:id should return 401 if user is not an admin", () => __awaiter(void 0, void 0, void 0, function* () {
                 let userPayload = {
                     fullname: "tester",
                     password: "12345678As@",
@@ -153,6 +152,36 @@ describe("/api/courses", () => {
                 const { response } = yield createNewUserAndUpdateCourse(userPayload);
                 expect(response.status).toBe(200);
                 expect(response.body.modifiedCount).toBe(1);
+            }));
+            test("PUT /api/courses/:id return 404  is is not a valid object id", () => __awaiter(void 0, void 0, void 0, function* () {
+                let userPayload = {
+                    fullname: "tester",
+                    password: "12345678As@",
+                    email: "tester878@gmail.com",
+                    admin: true,
+                };
+                let invalidCourseId = "a234dv4446s0k08989c";
+                const { response } = yield createNewUserAndUpdateCourse(userPayload, invalidCourseId);
+                expect(response.status).toBe(404);
+                expect(response.body.message).toMatch(/invalid object id/i);
+            }));
+            test("PUT /api/courses/:id return 404  error if course payload is not valid", () => __awaiter(void 0, void 0, void 0, function* () {
+                let userPayload = {
+                    fullname: "tester",
+                    password: "12345678As@",
+                    email: "tester999@gmail.com",
+                    admin: true,
+                };
+                let { token } = yield postNewUser(userPayload);
+                let response = yield (0, supertest_1.default)(index_1.app)
+                    .put(`/api/courses/${courseId}`)
+                    .send({
+                    invalidPayload: "Anaconda",
+                })
+                    .set("x-auth-token", token);
+                console.log(response.body);
+                expect(response.status).toBe(404);
+                expect(response.body.message).toMatch(/invalidPayload/i);
             }));
         });
     });

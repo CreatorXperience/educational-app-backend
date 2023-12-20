@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const mongoose_1 = __importDefault(require("mongoose"));
 const course_model_1 = __importDefault(require("../models/course-model"));
 const validateCourse_1 = __importDefault(require("../utils/course/validateCourse"));
 const validateUpdateCourse_1 = __importDefault(require("../utils/course/validateUpdateCourse"));
@@ -48,9 +47,6 @@ router.post("/", [courseAuth_1.default], (req, res) => __awaiter(void 0, void 0,
 }));
 router.put("/:id", [courseAuth_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
-    if (!mongoose_1.default.isValidObjectId(id)) {
-        return res.status(404).send({ message: "Invalid ID" });
-    }
     let { error } = (0, validateUpdateCourse_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
@@ -65,9 +61,6 @@ router.put("/:id", [courseAuth_1.default, validateId_1.default], (req, res) => _
 }));
 router.delete("/:id", [courseAuth_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
-    if (!mongoose_1.default.isValidObjectId(id)) {
-        return res.status(404).send({ message: "Invalid ID" });
-    }
     let course = yield course_model_1.default.findByIdAndDelete(id);
     if (!course) {
         return res.status(404).send({ message: "course not found" });

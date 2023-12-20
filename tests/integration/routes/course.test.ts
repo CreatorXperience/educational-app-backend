@@ -7,6 +7,7 @@ import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
 import coursePayload from "../test-payload/coursePayload";
+import { invalid } from "joi";
 
 let courseId: string;
 
@@ -136,20 +137,21 @@ describe("/api/courses", () => {
     });
 
     describe("PUT /api/courses", () => {
-      // beforeAll(async () => {
+      beforeAll(async () => {});
 
-      // });
-
-      const createNewUserAndUpdateCourse = async (payload: {
-        fullname: string;
-        password: string;
-        email: string;
-        admin?: boolean;
-      }) => {
+      const createNewUserAndUpdateCourse = async (
+        payload: {
+          fullname: string;
+          password: string;
+          email: string;
+          admin?: boolean;
+        },
+        id: string = courseId
+      ) => {
         let { token } = await postNewUser(payload);
 
         let response = await request(app)
-          .put(`/api/courses/${courseId}`)
+          .put(`/api/courses/${id}`)
           .send({
             category: "Anaconda",
           })
@@ -158,7 +160,7 @@ describe("/api/courses", () => {
         return { response };
       };
 
-      test("PUT /api/courses/:id", async () => {
+      test("PUT /api/courses/:id should return 401 if user is not an admin", async () => {
         let userPayload = {
           fullname: "tester",
           password: "12345678As@",
@@ -182,6 +184,45 @@ describe("/api/courses", () => {
         const { response } = await createNewUserAndUpdateCourse(userPayload);
         expect(response.status).toBe(200);
         expect(response.body.modifiedCount).toBe(1);
+      });
+      test("PUT /api/courses/:id return 404  is is not a valid object id", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester878@gmail.com",
+          admin: true,
+        };
+
+        let invalidCourseId = "a234dv4446s0k08989c";
+
+        const { response } = await createNewUserAndUpdateCourse(
+          userPayload,
+          invalidCourseId
+        );
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("PUT /api/courses/:id return 404  error if course payload is not valid", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester999@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await postNewUser(userPayload);
+
+        let response = await request(app)
+          .put(`/api/courses/${courseId}`)
+          .send({
+            invalidPayload: "Anaconda",
+          })
+          .set("x-auth-token", token);
+
+        console.log(response.body);
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalidPayload/i);
       });
     });
   });
