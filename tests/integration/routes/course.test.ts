@@ -69,7 +69,7 @@ describe("/api/courses", () => {
     });
   });
 
-  describe("POST /", () => {
+  describe("POST /api/courses", () => {
     test("should return a 401 error if user is not logged in", async () => {
       const response = await request(app)
         .post("/api/courses")
@@ -132,6 +132,31 @@ describe("/api/courses", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("author");
+      });
+    });
+
+    describe("PUT /api/courses", () => {
+      let userToken: string;
+      beforeAll(async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester000@gmail.com",
+        };
+
+        let { token } = await postNewUser(userPayload);
+        userToken = token;
+      });
+
+      test("PUT /api/courses", async () => {
+        let response = await request(app)
+          .put(`/api/courses/${courseId}`)
+          .send({
+            category: "Python",
+          })
+          .set("x-auth-token", userToken);
+
+        expect(response.body.message).toMatch(/not admin/i);
       });
     });
   });
