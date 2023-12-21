@@ -2,7 +2,7 @@ import request from "supertest";
 import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
 import insertDocInMongodbMockServer from "../../../utils/course/testsUtils/Insert";
-import TCourse from "../../../models/types/course-type";
+import { TCourse } from "../../../models/types/course-type";
 import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
@@ -10,7 +10,7 @@ import coursePayload from "../test-payload/coursePayload";
 
 let courseId: string;
 
-const postNewUser = async (userPayload: TUser) => {
+const createNewUserAndLogin = async (userPayload: TUser) => {
   let user = await createUser(userPayload);
   const res = await request(app)
     .post("/auth/user")
@@ -69,7 +69,7 @@ describe("/api/courses", () => {
     });
   });
 
-  describe("POST /", () => {
+  describe("POST /api/courses", () => {
     test("should return a 401 error if user is not logged in", async () => {
       const response = await request(app)
         .post("/api/courses")
@@ -86,7 +86,7 @@ describe("/api/courses", () => {
         password: "12345678@Ab",
       };
 
-      let { res, token } = await postNewUser(userPayload);
+      let { res, token } = await createNewUserAndLogin(userPayload);
       expect(res.status).toBe(200);
 
       const response = await request(app)
@@ -109,7 +109,9 @@ describe("/api/courses", () => {
           admin: true,
         };
 
-        let { res: Res, token: Token } = await postNewUser(userPayload);
+        let { res: Res, token: Token } = await createNewUserAndLogin(
+          userPayload
+        );
         res = Res;
         token = Token;
       });
@@ -132,6 +134,144 @@ describe("/api/courses", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("author");
+      });
+    });
+
+    describe("PUT /api/courses", () => {
+      beforeAll(async () => {});
+
+      const createNewUserAndUpdateCourse = async (
+        payload: {
+          fullname: string;
+          password: string;
+          email: string;
+          admin?: boolean;
+        },
+        id: string = courseId
+      ) => {
+        let { token } = await createNewUserAndLogin(payload);
+
+        let response = await request(app)
+          .put(`/api/courses/${id}`)
+          .send({
+            category: "Anaconda",
+          })
+          .set("x-auth-token", token);
+
+        return { response };
+      };
+
+      test("PUT /api/courses/:id should return 401 if user is not an admin", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester000@gmail.com",
+        };
+
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/not admin/i);
+      });
+
+      test("PUT /api/courses/:id return 200 if user is an admin", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester689@gmail.com",
+          admin: true,
+        };
+
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+        expect(response.status).toBe(200);
+        expect(response.body.modifiedCount).toBe(1);
+      });
+      test("PUT /api/courses/:id return 404  is is not a valid object id", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester878@gmail.com",
+          admin: true,
+        };
+
+        let invalidCourseId = "a234dv4446s0k08989c";
+
+        const { response } = await createNewUserAndUpdateCourse(
+          userPayload,
+          invalidCourseId
+        );
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("PUT /api/courses/:id return 404  error if course payload is not valid", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester999@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await createNewUserAndLogin(userPayload);
+
+        let response = await request(app)
+          .put(`/api/courses/${courseId}`)
+          .send({
+            invalidPayload: "Anaconda",
+          })
+          .set("x-auth-token", token);
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalidPayload/i);
+      });
+    });
+
+    describe("DELETE /api/courses/:id", () => {
+      let userToken: string;
+      let courseId: string;
+
+      beforeAll(async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "testerone@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await createNewUserAndLogin(userPayload);
+        userToken = token;
+      });
+
+      beforeEach(async () => {
+        let response = await request(app)
+          .post("/api/courses")
+          .send(coursePayload)
+          .set("x-auth-token", userToken);
+        courseId = response.body._id;
+      });
+
+      test("DELETE /api/courses/:id should delete a course with a valid id", async () => {
+        let response = await request(app)
+          .delete(`/api/courses/${courseId}`)
+          .set("x-auth-token", userToken);
+        console.log(response.body);
+
+        expect(response.status).toBe(200);
+      });
+      test("DELETE /api/courses/:id  should not delete course and should return  a 404 error if id is not valid", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app)
+          .delete(`/api/courses/${invalidId}`)
+          .set("x-auth-token", userToken);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("DELETE /api/courses/:id should not delete course and should return  a 401 permission denied error if no token is provided", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app).delete(`/api/courses/${invalidId}`);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/Permission denied/i);
       });
     });
   });

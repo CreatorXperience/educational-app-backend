@@ -1,5 +1,5 @@
 import { Response } from "express";
-import TCourse from "../../models/types/course-type";
+import { TCourse } from "../../models/types/course-type";
 import CourseModel from "../../models/course-model";
 
 const createCourse = async (course: TCourse, res: Response) => {

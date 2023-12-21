@@ -11,7 +11,6 @@ const createUser = async (userPayload: TUser) => {
   let salt = await bcrypt.genSalt(10);
   let passwordHash = await bcrypt.hash(newUser.password, salt);
   newUser.password = passwordHash;
-
   return await newUser.save();
 };
 

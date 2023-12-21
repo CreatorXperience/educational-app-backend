@@ -16,6 +16,7 @@ let userSchema = new mongoose_1.default.Schema({
     password: { type: String, maxLength: 500, minLength: 10, required: true },
     fullname: { type: String, minLength: 5, maxLength: 50, required: true },
     admin: { type: Boolean, default: false },
+    verified: { type: String, default: false },
 }, {
     methods: {
         generateAuthToken() {

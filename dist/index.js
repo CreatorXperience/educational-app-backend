@@ -16,7 +16,7 @@ exports.app = app;
 const port = process.env.PORT;
 (0, winston_handler_1.default)();
 let mongoServer;
-(0, setup_server_1.default)(app, port).then((server) => {
+(0, setup_server_1.default)(port).then((server) => {
     exports.mongoServer = mongoServer = server;
 });
 if (!process.env.EDU_KEY) {

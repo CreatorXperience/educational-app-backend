@@ -27,7 +27,9 @@ router.get("/:id", validateId, async (req, res) => {
   res.send(course);
 });
 
-router.post("/", courseAuth, async (req, res) => {
+router.post("/", [courseAuth], async (req: Request, res: Response) => {
+  let file = req.file;
+  console.log(file);
   let { error } = validateCourse(req.body);
 
   if (error) {
@@ -41,10 +43,6 @@ router.put(
   [courseAuth, validateId],
   async (req: Request, res: Response) => {
     let { id } = req.params;
-
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
 
     let { error } = validateUpdateCoursePayload(req.body);
 
@@ -75,9 +73,6 @@ router.delete(
   async (req: Request, res: Response) => {
     let { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
     let course = await CourseModel.findByIdAndDelete(id);
     if (!course) {
       return res.status(404).send({ message: "course not found" });
