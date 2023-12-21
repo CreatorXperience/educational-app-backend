@@ -7,11 +7,10 @@ import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
 import coursePayload from "../test-payload/coursePayload";
-import { invalid } from "joi";
 
 let courseId: string;
 
-const postNewUser = async (userPayload: TUser) => {
+const createNewUserAndLogin = async (userPayload: TUser) => {
   let user = await createUser(userPayload);
   const res = await request(app)
     .post("/auth/user")
@@ -87,7 +86,7 @@ describe("/api/courses", () => {
         password: "12345678@Ab",
       };
 
-      let { res, token } = await postNewUser(userPayload);
+      let { res, token } = await createNewUserAndLogin(userPayload);
       expect(res.status).toBe(200);
 
       const response = await request(app)
@@ -110,7 +109,9 @@ describe("/api/courses", () => {
           admin: true,
         };
 
-        let { res: Res, token: Token } = await postNewUser(userPayload);
+        let { res: Res, token: Token } = await createNewUserAndLogin(
+          userPayload
+        );
         res = Res;
         token = Token;
       });
@@ -148,7 +149,7 @@ describe("/api/courses", () => {
         },
         id: string = courseId
       ) => {
-        let { token } = await postNewUser(payload);
+        let { token } = await createNewUserAndLogin(payload);
 
         let response = await request(app)
           .put(`/api/courses/${id}`)
@@ -211,7 +212,7 @@ describe("/api/courses", () => {
           admin: true,
         };
 
-        let { token } = await postNewUser(userPayload);
+        let { token } = await createNewUserAndLogin(userPayload);
 
         let response = await request(app)
           .put(`/api/courses/${courseId}`)
@@ -219,10 +220,58 @@ describe("/api/courses", () => {
             invalidPayload: "Anaconda",
           })
           .set("x-auth-token", token);
-
-        console.log(response.body);
         expect(response.status).toBe(404);
         expect(response.body.message).toMatch(/invalidPayload/i);
+      });
+    });
+
+    describe("DELETE /api/courses/:id", () => {
+      let userToken: string;
+      let courseId: string;
+
+      beforeAll(async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "testerone@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await createNewUserAndLogin(userPayload);
+        userToken = token;
+      });
+
+      beforeEach(async () => {
+        let response = await request(app)
+          .post("/api/courses")
+          .send(coursePayload)
+          .set("x-auth-token", userToken);
+        courseId = response.body._id;
+      });
+
+      test("DELETE /api/courses/:id should delete a course with a valid id", async () => {
+        let response = await request(app)
+          .delete(`/api/courses/${courseId}`)
+          .set("x-auth-token", userToken);
+        console.log(response.body);
+
+        expect(response.status).toBe(200);
+      });
+      test("DELETE /api/courses/:id  should not delete course and should return  a 404 error if id is not valid", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app)
+          .delete(`/api/courses/${invalidId}`)
+          .set("x-auth-token", userToken);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("DELETE /api/courses/:id should not delete course and should return  a 401 permission denied error if no token is provided", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app).delete(`/api/courses/${invalidId}`);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/Permission denied/i);
       });
     });
   });

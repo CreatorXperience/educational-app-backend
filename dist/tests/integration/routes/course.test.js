@@ -20,7 +20,7 @@ const createUser_1 = __importDefault(require("../../../utils/user/createUser"));
 const lodash_1 = __importDefault(require("lodash"));
 const coursePayload_1 = __importDefault(require("../test-payload/coursePayload"));
 let courseId;
-const postNewUser = (userPayload) => __awaiter(void 0, void 0, void 0, function* () {
+const createNewUserAndLogin = (userPayload) => __awaiter(void 0, void 0, void 0, function* () {
     let user = yield (0, createUser_1.default)(userPayload);
     const res = yield (0, supertest_1.default)(index_1.app)
         .post("/auth/user")
@@ -81,7 +81,7 @@ describe("/api/courses", () => {
                 email: "thebigboy@gmail.com",
                 password: "12345678@Ab",
             };
-            let { res, token } = yield postNewUser(userPayload);
+            let { res, token } = yield createNewUserAndLogin(userPayload);
             expect(res.status).toBe(200);
             const response = yield (0, supertest_1.default)(index_1.app)
                 .post("/api/courses")
@@ -99,7 +99,7 @@ describe("/api/courses", () => {
                     password: "12345678@Ab",
                     admin: true,
                 };
-                let { res: Res, token: Token } = yield postNewUser(userPayload);
+                let { res: Res, token: Token } = yield createNewUserAndLogin(userPayload);
                 res = Res;
                 token = Token;
             }));
@@ -123,7 +123,7 @@ describe("/api/courses", () => {
         describe("PUT /api/courses", () => {
             beforeAll(() => __awaiter(void 0, void 0, void 0, function* () { }));
             const createNewUserAndUpdateCourse = (payload, id = courseId) => __awaiter(void 0, void 0, void 0, function* () {
-                let { token } = yield postNewUser(payload);
+                let { token } = yield createNewUserAndLogin(payload);
                 let response = yield (0, supertest_1.default)(index_1.app)
                     .put(`/api/courses/${id}`)
                     .send({
@@ -172,16 +172,57 @@ describe("/api/courses", () => {
                     email: "tester999@gmail.com",
                     admin: true,
                 };
-                let { token } = yield postNewUser(userPayload);
+                let { token } = yield createNewUserAndLogin(userPayload);
                 let response = yield (0, supertest_1.default)(index_1.app)
                     .put(`/api/courses/${courseId}`)
                     .send({
                     invalidPayload: "Anaconda",
                 })
                     .set("x-auth-token", token);
-                console.log(response.body);
                 expect(response.status).toBe(404);
                 expect(response.body.message).toMatch(/invalidPayload/i);
+            }));
+        });
+        describe("DELETE /api/courses/:id", () => {
+            let userToken;
+            let courseId;
+            beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+                let userPayload = {
+                    fullname: "tester",
+                    password: "12345678As@",
+                    email: "testerone@gmail.com",
+                    admin: true,
+                };
+                let { token } = yield createNewUserAndLogin(userPayload);
+                userToken = token;
+            }));
+            beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
+                let response = yield (0, supertest_1.default)(index_1.app)
+                    .post("/api/courses")
+                    .send(coursePayload_1.default)
+                    .set("x-auth-token", userToken);
+                courseId = response.body._id;
+            }));
+            test("DELETE /api/courses/:id should delete a course with a valid id", () => __awaiter(void 0, void 0, void 0, function* () {
+                let response = yield (0, supertest_1.default)(index_1.app)
+                    .delete(`/api/courses/${courseId}`)
+                    .set("x-auth-token", userToken);
+                console.log(response.body);
+                expect(response.status).toBe(200);
+            }));
+            test("DELETE /api/courses/:id  should not delete course and should return  a 404 error if id is not valid", () => __awaiter(void 0, void 0, void 0, function* () {
+                let invalidId = "sdfgh1363sdfghjklh234";
+                let response = yield (0, supertest_1.default)(index_1.app)
+                    .delete(`/api/courses/${invalidId}`)
+                    .set("x-auth-token", userToken);
+                expect(response.status).toBe(404);
+                expect(response.body.message).toMatch(/invalid object id/i);
+            }));
+            test("DELETE /api/courses/:id should not delete course and should return  a 401 permission denied error if no token is provided", () => __awaiter(void 0, void 0, void 0, function* () {
+                let invalidId = "sdfgh1363sdfghjklh234";
+                let response = yield (0, supertest_1.default)(index_1.app).delete(`/api/courses/${invalidId}`);
+                expect(response.status).toBe(401);
+                expect(response.body.message).toMatch(/Permission denied/i);
             }));
         });
     });
