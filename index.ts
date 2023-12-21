@@ -16,7 +16,7 @@ winstonErrorhandler();
 
 let mongoServer: MongoMemoryServer;
 
-setupServer(app, port).then((server) => {
+setupServer(port).then((server) => {
   mongoServer = server;
 });
 
@@ -29,6 +29,7 @@ if (process.env.NODE_ENV !== "test") {
     console.log(`it has been connected to port ${port}`);
   });
 }
+
 routesMiddlewares(app);
 
 export { app, mongoServer };

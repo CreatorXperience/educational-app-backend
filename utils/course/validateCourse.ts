@@ -1,4 +1,4 @@
-import TCourse from "../../models/types/course-type";
+import { TCourse } from "../../models/types/course-type";
 import Joi from "joi";
 
 const validateCourse = (course: TCourse) => {
