@@ -5,6 +5,7 @@ import users from "../routes/user";
 import auth from "../routes/auth";
 import email from "../routes/sendmail";
 import verifyEmail from "../routes/verify-email";
+import forgotpassword from "../routes/forgot-password";
 import error from "../middleware/error";
 import express from "express";
 
@@ -18,6 +19,7 @@ const routesMiddlewares = (app: Application) => {
   app.use("/uploads", upload);
   app.use("/send-email", email);
   app.use("/verify-email", verifyEmail);
+  app.use("/forgot-password", forgotpassword);
   app.use(error);
 };
 
