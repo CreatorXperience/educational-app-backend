@@ -21,11 +21,11 @@ Router.post("/", async (req, res) => {
   }
 
   const { email, id } = req.body;
-  const user = await UserModel.findById(id);
+  const user = await UserModel.find({ email });
   if (!user) {
     return res.status(404).send({ message: "user not found" });
   }
-  await sendPasswordLink({ email, res, id });
+  await sendPasswordLink({ email, res });
 });
 
 export default Router;
