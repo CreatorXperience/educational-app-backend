@@ -11,7 +11,7 @@ import expressLogger from "./startup/winston-logger";
 
 const app: Application = express();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 winstonErrorhandler();
 
