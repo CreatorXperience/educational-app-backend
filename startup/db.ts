@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import logger from "./winston-logger";
 
 async function connectToMongoDB(mongoURI: string) {
   mongoose
     .connect(mongoURI)
-    .then(() => console.log(`connected successfully to ${mongoURI}`))
+    .then(() => logger.info(`connected successfully to ${mongoURI}`))
     .catch(() => {
-      console.log("error occured while connecting to mongodb");
+      logger.error("error occured while connecting to mongodb");
     });
 }
 
