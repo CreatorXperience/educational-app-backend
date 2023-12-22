@@ -1,11 +1,7 @@
 import { Response } from "express";
 import mailTransport from "./nodemailer-transport";
 
-const sendPasswordLink = async (payload: {
-  email: string;
-  res: Response;
-  id: string;
-}) => {
+const sendPasswordLink = async (payload: { email: string; res: Response }) => {
   const transporter = mailTransport();
 
   const mailOptions = {

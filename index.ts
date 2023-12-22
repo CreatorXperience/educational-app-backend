@@ -7,6 +7,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import setupServer from "./startup/setup-server";
 import routesMiddlewares from "./startup/express-server-routes";
 import winstonErrorhandler from "./startup/winston-handler";
+import expressLogger from "./startup/winston-logger";
 
 const app: Application = express();
 
@@ -26,7 +27,7 @@ if (!process.env.EDU_KEY) {
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
-    console.log(`it has been connected to port ${port}`);
+    expressLogger.info(`it has been connected to port ${port}`);
   });
 }
 

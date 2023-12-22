@@ -2,3 +2,7 @@ node_modules/
 *.env
 coverage/
 *.log
+*.env.dev
+.env.example
+.env
+*.dev

@@ -14,26 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const joi_1 = __importDefault(require("joi"));
-const send_password_1 = __importDefault(require("../utils/user/send-password"));
 const userModel_1 = __importDefault(require("../models/userModel"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const Router = express_1.default.Router();
-const forgotPasswordValidation = (payload) => {
-    const forgotPassword = joi_1.default.object({
+const validatePayload = (payload) => {
+    let payloadValidation = joi_1.default.object({
         email: joi_1.default.string().required().email(),
-        id: joi_1.default.string().required(),
+        password: joi_1.default.string(),
     });
-    return forgotPassword.validate(payload);
+    return payloadValidation.validate(payload);
 };
 Router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { error, value } = forgotPasswordValidation(req.body);
+    let { error, value } = validatePayload(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
     }
-    const { email, id } = req.body;
-    const user = yield userModel_1.default.find({ email });
-    if (!user) {
-        return res.status(404).send({ message: "user not found" });
-    }
-    yield (0, send_password_1.default)({ email, res });
+    let options = {
+        writeConcern: "w",
+        readConcern: "level",
+    };
+    let session = yield mongoose_1.default.startSession();
+    yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
+        let user = yield userModel_1.default.find({ email: req.body.email });
+        if (!user) {
+            res
+                .status(404)
+                .send({ message: "User with the specified email does not exist" });
+            return session.abortTransaction();
+        }
+        yield userModel_1.default.updateOne({ email: req.body.email }, { $set: { password: req.body.password } });
+        res.send("password changed successfully");
+        session.commitTransaction();
+    }));
 }));
 exports.default = Router;
