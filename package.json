@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "test": " jest --watchAll --verbose",
     "dev": "concurrently \"npm run build --watch\"  \"nodemon -q  dist/index.js\" \"npm test\"  ",
-    "start": "npm run build && node -q dist/index.js"
+    "start": "npm run build && node  dist/index.js"
   },
   "keywords": [],
   "author": "",
