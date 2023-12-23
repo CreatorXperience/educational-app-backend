@@ -15,7 +15,6 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/config": "^3.3.3",
-    "@types/mongoose": "^5.11.97",
     "@types/nodemailer": "^6.4.14",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.9",
