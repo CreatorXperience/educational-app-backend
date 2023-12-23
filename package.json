@@ -6,8 +6,8 @@
   "scripts": {
     "build": "npx tsc",
     "test": " jest --watchAll --verbose",
-    "dev": "concurrently \"npx tsc --watch\"  \"nodemon -q  dist/index.js\" \"npm test\"  ",
-    "start": "concurrently \"npx tsc --watch\"  \"node -q  dist/index.js\" \"npm test\"  "
+    "dev": "concurrently \"npm run build --watch\"  \"nodemon -q  dist/index.js\" \"npm test\"  ",
+    "start": "node -q dist/index.js"
   },
   "keywords": [],
   "author": "",
