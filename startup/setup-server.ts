@@ -1,4 +1,3 @@
-import { Application } from "express";
 import { connectToMongoDB } from "./db";
 import getUri from "./getUri";
 import { MongoMemoryServer } from "mongodb-memory-server";
