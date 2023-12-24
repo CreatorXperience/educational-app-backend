@@ -26,4 +26,8 @@ if (!process.env.EDU_KEY) {
 
 routesMiddlewares(app);
 
+app.get("/", (req, res) => {
+  res.send("<h1>Welcome to this API </h1>");
+});
+
 export { app, mongoServer };
