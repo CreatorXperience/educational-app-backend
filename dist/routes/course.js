@@ -13,16 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const mongoose_1 = __importDefault(require("mongoose"));
 const course_model_1 = __importDefault(require("../models/course-model"));
 const validateCourse_1 = __importDefault(require("../utils/course/validateCourse"));
 const validateUpdateCourse_1 = __importDefault(require("../utils/course/validateUpdateCourse"));
 const createCourse_1 = __importDefault(require("../utils/course/createCourse"));
-const course_1 = __importDefault(require("../middleware/course"));
+const courseAuth_1 = __importDefault(require("../middleware/courseAuth"));
 const validateId_1 = __importDefault(require("../middleware/validateId"));
 const router = (0, express_1.Router)();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // return res.send("go back");
     let courses = yield course_model_1.default.find();
     if (courses) {
         return res.send(courses);
@@ -38,18 +36,17 @@ router.get("/:id", validateId_1.default, (req, res) => __awaiter(void 0, void 0,
     }
     res.send(course);
 }));
-router.post("/", course_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", [courseAuth_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let file = req.file;
+    console.log(file);
     let { error } = (0, validateCourse_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
     }
     return (0, createCourse_1.default)(req.body, res);
 }));
-router.put("/:id", [course_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put("/:id", [courseAuth_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
-    if (!mongoose_1.default.isValidObjectId(id)) {
-        return res.status(404).send({ message: "Invalid ID" });
-    }
     let { error } = (0, validateUpdateCourse_1.default)(req.body);
     if (error) {
         return res.status(404).send({ message: error.details[0].message });
@@ -62,11 +59,8 @@ router.put("/:id", [course_1.default, validateId_1.default], (req, res) => __awa
     }
     return res.send(course);
 }));
-router.delete("/:id", [course_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/:id", [courseAuth_1.default, validateId_1.default], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = req.params;
-    if (!mongoose_1.default.isValidObjectId(id)) {
-        return res.status(404).send({ message: "Invalid ID" });
-    }
     let course = yield course_model_1.default.findByIdAndDelete(id);
     if (!course) {
         return res.status(404).send({ message: "course not found" });

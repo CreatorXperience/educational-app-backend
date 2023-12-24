@@ -17,4 +17,4 @@ type TCourse = {
   stars: number;
 };
 
-export default TCourse;
+export type { TCourse };

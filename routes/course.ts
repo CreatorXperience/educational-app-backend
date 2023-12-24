@@ -4,13 +4,12 @@ import CourseModel from "../models/course-model";
 import validateCourse from "../utils/course/validateCourse";
 import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
-import courseAuth from "../middleware/course";
+import courseAuth from "../middleware/courseAuth";
 import validateId from "../middleware/validateId";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  // return res.send("go back");
   let courses = await CourseModel.find();
   if (courses) {
     return res.send(courses);
@@ -28,7 +27,9 @@ router.get("/:id", validateId, async (req, res) => {
   res.send(course);
 });
 
-router.post("/", courseAuth, async (req, res) => {
+router.post("/", [courseAuth], async (req: Request, res: Response) => {
+  let file = req.file;
+  console.log(file);
   let { error } = validateCourse(req.body);
 
   if (error) {
@@ -42,10 +43,6 @@ router.put(
   [courseAuth, validateId],
   async (req: Request, res: Response) => {
     let { id } = req.params;
-
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
 
     let { error } = validateUpdateCoursePayload(req.body);
 
@@ -76,9 +73,6 @@ router.delete(
   async (req: Request, res: Response) => {
     let { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(404).send({ message: "Invalid ID" });
-    }
     let course = await CourseModel.findByIdAndDelete(id);
     if (!course) {
       return res.status(404).send({ message: "course not found" });

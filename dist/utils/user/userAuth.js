@@ -25,7 +25,9 @@ const userAuth = (userPayload, res) => __awaiter(void 0, void 0, void 0, functio
         let isPasswordEqual = yield bcryptjs_1.default.compare(userPayload.password, user.password);
         if (isPasswordEqual) {
             let token = user.generateAuthToken();
-            return res.header("x-auth-token", token).send("successfully logged in");
+            return res.header("x-auth-token", token).send({
+                userId: user._id,
+            });
         }
         return res.status(401).send({ message: "Invalid login or password" });
     }

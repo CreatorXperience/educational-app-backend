@@ -12,7 +12,7 @@ const courseAuth = async (
   if (!token) {
     return res
       .status(401)
-      .send({ message: "Permisson denied. No token provided" });
+      .send({ message: "Permission denied. No token provided" });
   }
 
   try {
@@ -20,7 +20,6 @@ const courseAuth = async (
     req.user = userPayload as JwtPayload;
     const user = await UserModel.findById(req.user?._id);
     if (user?.admin) {
-      console.log("user is an admin");
       return next();
     }
 

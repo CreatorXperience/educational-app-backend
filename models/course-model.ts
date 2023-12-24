@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import TCourse from "./types/course-type";
+import { TCourse } from "./types/course-type";
 import authorSchema from "./authorSchema";
+import fileSchema from "./file-model";
 
 let courseSchema = new mongoose.Schema<TCourse>({
   category: { type: String, required: true, minLength: 5, maxLength: 20 },

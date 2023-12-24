@@ -1,10 +1,14 @@
 import express from "express";
 import _ from "lodash";
-import complexPassword from "../utils/user/handlePasswordComplexity";
+import dotenv from "dotenv";
 
+import complexPassword from "../utils/user/handlePasswordComplexity";
 import validateUser from "../utils/user/validateUser";
 import createUser from "../utils/user/createUser";
 import findUser from "../utils/user/findUser";
+import sendOtp from "../utils/user/send-otp";
+
+dotenv.config();
 
 const router = express.Router();
 
@@ -29,7 +33,13 @@ router.post("/", async (req, res) => {
   let user = await createUser(req.body);
 
   if (user) {
-    let userPayload = _.pick(user, ["fullname", "email"]);
+    let userPayload = _.pick(user, ["fullname", "email", "_id"]);
+
+    await sendOtp({
+      email: userPayload.email,
+      res,
+      id: userPayload._id.toHexString(),
+    });
     return res.send(userPayload);
   }
   res.status(500).send("Internal Server Error");

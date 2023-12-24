@@ -14,13 +14,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectToMongoDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const winston_logger_1 = __importDefault(require("./winston-logger"));
+const __1 = require("..");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 function connectToMongoDB(mongoURI) {
     return __awaiter(this, void 0, void 0, function* () {
+        const port = process.env.PORT || 3030;
         mongoose_1.default
             .connect(mongoURI)
-            .then(() => console.log(`connected successfully to ${mongoURI}`))
+            .then(() => {
+            if (process.env.NODE_ENV !== "test") {
+                __1.app.listen(port, () => {
+                    winston_logger_1.default.info(`it has been connected to port ${port}`);
+                });
+            }
+            winston_logger_1.default.info(`connected successfully to ${mongoURI}`);
+        })
             .catch(() => {
-            console.log("error occured while connecting to mongodb");
+            winston_logger_1.default.error("error occured while connecting to mongodb");
         });
     });
 }

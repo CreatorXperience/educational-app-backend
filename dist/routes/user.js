@@ -14,10 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const lodash_1 = __importDefault(require("lodash"));
+const dotenv_1 = __importDefault(require("dotenv"));
 const handlePasswordComplexity_1 = __importDefault(require("../utils/user/handlePasswordComplexity"));
 const validateUser_1 = __importDefault(require("../utils/user/validateUser"));
 const createUser_1 = __importDefault(require("../utils/user/createUser"));
 const findUser_1 = __importDefault(require("../utils/user/findUser"));
+const send_otp_1 = __importDefault(require("../utils/user/send-otp"));
+dotenv_1.default.config();
 const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { error } = (0, validateUser_1.default)(req.body);
@@ -34,7 +37,12 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     let user = yield (0, createUser_1.default)(req.body);
     if (user) {
-        let userPayload = lodash_1.default.pick(user, ["fullname", "email"]);
+        let userPayload = lodash_1.default.pick(user, ["fullname", "email", "_id"]);
+        yield (0, send_otp_1.default)({
+            email: userPayload.email,
+            res,
+            id: userPayload._id.toHexString(),
+        });
         return res.send(userPayload);
     }
     res.status(500).send("Internal Server Error");

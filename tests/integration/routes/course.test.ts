@@ -2,53 +2,15 @@ import request from "supertest";
 import { app, mongoServer } from "../../../index";
 import mongoose from "mongoose";
 import insertDocInMongodbMockServer from "../../../utils/course/testsUtils/Insert";
-import TCourse from "../../../models/types/course-type";
+import { TCourse } from "../../../models/types/course-type";
 import createUser from "../../../utils/user/createUser";
 import _ from "lodash";
 import { TUser } from "../../../types/userType";
-
-const coursePayload = {
-  author: {
-    name: "Adam Smith",
-    post: "Python Developer",
-    bio: "Created a ongodb database with som small data init. ain't she beautiful init",
-  },
-  category: "Python",
-
-  topic: [
-    {
-      description:
-        "Learn the basics of Python for finance and algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-      title: "Introduction to Python for Finance",
-      youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-      coverImage: "my Image is on it way",
-    },
-    {
-      description:
-        "Learn how to use Python for financial analysis and algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-      title: "Python for Financial Analysis",
-      youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-      coverImage: "my Image is on it way",
-    },
-    {
-      description:
-        "Learn how to use Python for algorithmic trading. This course will teach you the fundamentals of Python programming and its applications in finance.",
-      title: "Python for Algorithmic Trading",
-      youtubeId: "https://www.youtube.com/watch?v=abcdef12345",
-      coverImage: "my Image is on it way",
-    },
-  ],
-  courseDescription:
-    "This comprehensive course covers Python's applications in financial analysis and algorithmic trading. Learn data analysis, statistical modeling, and trading strategies in Python.",
-  coverImage:
-    "https://i.pinimg.com/564x/34/01/ee/3401ee2dbb27776d850e77c6a2bee3d2.jpg",
-  coverTitle: "Python for Financial Analysis Next and Algorithmic Trading",
-  stars: 3,
-};
+import coursePayload from "../test-payload/coursePayload";
 
 let courseId: string;
 
-const postNewUser = async (userPayload: TUser) => {
+const createNewUserAndLogin = async (userPayload: TUser) => {
   let user = await createUser(userPayload);
   const res = await request(app)
     .post("/auth/user")
@@ -96,19 +58,18 @@ describe("/api/courses", () => {
       expect(response.body).toMatchObject({ message: "Invalid object id" });
     });
 
-    test("should return 404 if passed with a valid id but with data associated with the id in our database", async () => {
-      let invalidId = "65751bi3193a16af55ab7626";
-      const response = await request(app).get(`/api/courses/${123}`);
+    test("should return 404 error if request a a valid id but with no data associated with the id in the database", async () => {
+      let validData = "6565fdee473fa8c1a4b29503";
+      const response = await request(app).get(`/api/courses/${validData}`);
       expect(response.status).toBe(404);
 
       expect(response.body).toMatchObject({
-        message: "Invalid object id",
+        message: "The course with the specified ID doesn't exist",
       });
-      // expect(response.body).toHaveProperty("message", courseId);
     });
   });
 
-  describe("POST /", () => {
+  describe("POST /api/courses", () => {
     test("should return a 401 error if user is not logged in", async () => {
       const response = await request(app)
         .post("/api/courses")
@@ -125,7 +86,7 @@ describe("/api/courses", () => {
         password: "12345678@Ab",
       };
 
-      let { res, token } = await postNewUser(userPayload);
+      let { res, token } = await createNewUserAndLogin(userPayload);
       expect(res.status).toBe(200);
 
       const response = await request(app)
@@ -137,7 +98,7 @@ describe("/api/courses", () => {
       // expect(response.body.message).toBe()
     });
 
-    describe("POST /", () => {
+    describe("Admin POST to /api/course", () => {
       let res: request.Response, token: string;
 
       beforeAll(async () => {
@@ -148,14 +109,14 @@ describe("/api/courses", () => {
           admin: true,
         };
 
-        let { res: Res, token: Token } = await postNewUser(userPayload);
+        let { res: Res, token: Token } = await createNewUserAndLogin(
+          userPayload
+        );
         res = Res;
         token = Token;
       });
 
       test("should return a 404 error if user is logged in and an admin but invalid payload", async () => {
-        expect(res.status).toBe(200);
-
         const response = await request(app)
           .post("/api/courses")
           .send({ name: "test" })
@@ -166,8 +127,6 @@ describe("/api/courses", () => {
       });
 
       test("should return a 200 success status if user is logged in and an admin with the valid payload", async () => {
-        expect(res.status).toBe(200);
-
         const response = await request(app)
           .post("/api/courses")
           .send(coursePayload)
@@ -175,6 +134,144 @@ describe("/api/courses", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("author");
+      });
+    });
+
+    describe("PUT /api/courses", () => {
+      beforeAll(async () => {});
+
+      const createNewUserAndUpdateCourse = async (
+        payload: {
+          fullname: string;
+          password: string;
+          email: string;
+          admin?: boolean;
+        },
+        id: string = courseId
+      ) => {
+        let { token } = await createNewUserAndLogin(payload);
+
+        let response = await request(app)
+          .put(`/api/courses/${id}`)
+          .send({
+            category: "Anaconda",
+          })
+          .set("x-auth-token", token);
+
+        return { response };
+      };
+
+      test("PUT /api/courses/:id should return 401 if user is not an admin", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester000@gmail.com",
+        };
+
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/not admin/i);
+      });
+
+      test("PUT /api/courses/:id return 200 if user is an admin", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester689@gmail.com",
+          admin: true,
+        };
+
+        const { response } = await createNewUserAndUpdateCourse(userPayload);
+        expect(response.status).toBe(200);
+        expect(response.body.modifiedCount).toBe(1);
+      });
+      test("PUT /api/courses/:id return 404  is is not a valid object id", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester878@gmail.com",
+          admin: true,
+        };
+
+        let invalidCourseId = "a234dv4446s0k08989c";
+
+        const { response } = await createNewUserAndUpdateCourse(
+          userPayload,
+          invalidCourseId
+        );
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("PUT /api/courses/:id return 404  error if course payload is not valid", async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "tester999@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await createNewUserAndLogin(userPayload);
+
+        let response = await request(app)
+          .put(`/api/courses/${courseId}`)
+          .send({
+            invalidPayload: "Anaconda",
+          })
+          .set("x-auth-token", token);
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalidPayload/i);
+      });
+    });
+
+    describe("DELETE /api/courses/:id", () => {
+      let userToken: string;
+      let courseId: string;
+
+      beforeAll(async () => {
+        let userPayload = {
+          fullname: "tester",
+          password: "12345678As@",
+          email: "testerone@gmail.com",
+          admin: true,
+        };
+
+        let { token } = await createNewUserAndLogin(userPayload);
+        userToken = token;
+      });
+
+      beforeEach(async () => {
+        let response = await request(app)
+          .post("/api/courses")
+          .send(coursePayload)
+          .set("x-auth-token", userToken);
+        courseId = response.body._id;
+      });
+
+      test("DELETE /api/courses/:id should delete a course with a valid id", async () => {
+        let response = await request(app)
+          .delete(`/api/courses/${courseId}`)
+          .set("x-auth-token", userToken);
+        console.log(response.body);
+
+        expect(response.status).toBe(200);
+      });
+      test("DELETE /api/courses/:id  should not delete course and should return  a 404 error if id is not valid", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app)
+          .delete(`/api/courses/${invalidId}`)
+          .set("x-auth-token", userToken);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toMatch(/invalid object id/i);
+      });
+      test("DELETE /api/courses/:id should not delete course and should return  a 401 permission denied error if no token is provided", async () => {
+        let invalidId = "sdfgh1363sdfghjklh234";
+        let response = await request(app).delete(`/api/courses/${invalidId}`);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toMatch(/Permission denied/i);
       });
     });
   });
