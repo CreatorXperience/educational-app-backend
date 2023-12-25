@@ -1,4 +1,6 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
+import dotenv from "dotenv"
+dotenv.config()
 
 let mongoServer: MongoMemoryServer;
 
@@ -14,6 +16,7 @@ const getUri = async (connect: (uri: string) => Promise<void>) => {
       ? await mockServerURI()
       : (process.env.URI as string);
 
+      console.log(uri)
   connect(uri);
   return mongoServer;
 };

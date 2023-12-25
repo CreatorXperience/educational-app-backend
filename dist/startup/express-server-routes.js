@@ -11,9 +11,12 @@ const sendmail_1 = __importDefault(require("../routes/sendmail"));
 const verify_email_1 = __importDefault(require("../routes/verify-email"));
 const forgot_password_1 = __importDefault(require("../routes/forgot-password"));
 const resetPassword_1 = __importDefault(require("../routes/resetPassword"));
+const search_1 = __importDefault(require("../routes/search"));
 const error_1 = __importDefault(require("../middleware/error"));
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const routesMiddlewares = (app) => {
+    app.use((0, cors_1.default)());
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use("/api/courses", course_1.default);
@@ -23,6 +26,7 @@ const routesMiddlewares = (app) => {
     app.use("/send-email", sendmail_1.default);
     app.use("/verify-email", verify_email_1.default);
     app.use("/auth/reset-password", resetPassword_1.default);
+    app.use('/search', search_1.default);
     app.use("/forgot-password", forgot_password_1.default);
     app.use(error_1.default);
 };
