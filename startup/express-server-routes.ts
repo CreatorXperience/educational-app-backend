@@ -9,8 +9,10 @@ import forgotpassword from "../routes/forgot-password";
 import resetPassword from "../routes/resetPassword";
 import error from "../middleware/error";
 import express from "express";
+import cors from "cors"
 
 const routesMiddlewares = (app: Application) => {
+  app.use(cors())
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 

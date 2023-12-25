@@ -23,3 +23,6 @@ if (!process.env.EDU_KEY) {
     process.exit(1);
 }
 (0, express_server_routes_1.default)(app);
+app.get("/", (req, res) => {
+    res.send("<h1>Welcome to this API </h1>");
+});
