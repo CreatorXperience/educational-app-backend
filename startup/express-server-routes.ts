@@ -7,6 +7,7 @@ import email from "../routes/sendmail";
 import verifyEmail from "../routes/verify-email";
 import forgotpassword from "../routes/forgot-password";
 import resetPassword from "../routes/resetPassword";
+import search from "../routes/search"
 import error from "../middleware/error";
 import express from "express";
 import cors from "cors"
@@ -23,6 +24,7 @@ const routesMiddlewares = (app: Application) => {
   app.use("/send-email", email);
   app.use("/verify-email", verifyEmail);
   app.use("/auth/reset-password", resetPassword);
+  app.use('/search', search)
   app.use("/forgot-password", forgotpassword);
   app.use(error);
 };

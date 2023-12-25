@@ -9,6 +9,7 @@ import setupServer from "./startup/setup-server";
 import routesMiddlewares from "./startup/express-server-routes";
 import winstonErrorhandler from "./startup/winston-handler";
 
+
 const app: Application = express();
 
 const port = process.env.PORT || 3030;
@@ -30,5 +31,9 @@ routesMiddlewares(app);
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to this API </h1>");
 });
+
+
+
+
 
 export { app, mongoServer };
