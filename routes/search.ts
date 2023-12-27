@@ -1,43 +1,42 @@
-import express from "express"
-import Joi from "joi"
-import CourseModel from "../models/course-model"
+import express from "express";
+import Joi from "joi";
+import CourseModel from "../models/course-model";
 
-const router = express.Router()
+const router = express.Router();
 
-const validatePayload = (payload: {searchTerm: string}) => {
- const validation =    Joi.object({
-searchterm: Joi.string().required()
-})
+const validatePayload = (payload: { searchTerm: string }) => {
+  const validation = Joi.object({
+    searchterm: Joi.string().required(),
+  });
 
-return validation.validate(payload)
+  return validation.validate(payload);
+};
 
-}
-
-router.post("/", async (req,res)=> {
-let {error} = validatePayload(req.body)
-if(error){
-   return  res.status(404).send(error.details[0].message)
-}
-let pipeline = [
+router.post("/", async (req, res) => {
+  let { error } = validatePayload(req.body);
+  if (error) {
+    return res.status(404).send(error.details[0].message);
+  }
+  let pipeline = [
     {
-        $search: {
-            index: "courses-search",
-            text: {
-                query: req.body.searchterm,
-                path: {
-                    wildcard: "*"
-                }
-            }
-        }
-    }
-]
+      $search: {
+        index: "courses-search",
+        text: {
+          query: req.body.searchterm,
+          path: {
+            wildcard: "*",
+          },
+        },
+      },
+    },
+  ];
 
-let course = await CourseModel.aggregate(pipeline, {allowDiskUse: true})
+  let course = await CourseModel.aggregate(pipeline, { allowDiskUse: true });
 
-if(!course){
-    return res.status(404).send({message: "no course found"})
-}
-res.send(course)
-})
+  if (!course) {
+    return res.status(404).send({ message: "no course found" });
+  }
+  res.send(course);
+});
 
-export default router
+export default router;
