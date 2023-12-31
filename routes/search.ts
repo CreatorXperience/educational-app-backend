@@ -13,6 +13,8 @@ const validatePayload = (payload: { searchTerm: string }) => {
 };
 
 router.post("/", async (req, res) => {
+  let { count } = req.query;
+
   let { error } = validatePayload(req.body);
   if (error) {
     return res.status(404).send(error.details[0].message);
@@ -29,9 +31,17 @@ router.post("/", async (req, res) => {
         },
       },
     },
+    {
+      $skip: Number(count) * 2,
+    },
+    {
+      $limit: 2,
+    },
   ];
 
-  let course = await CourseModel.aggregate(pipeline, { allowDiskUse: true });
+  let course = await CourseModel.aggregate(pipeline, {
+    allowDiskUse: true,
+  });
 
   if (!course) {
     return res.status(404).send({ message: "no course found" });
