@@ -26,7 +26,7 @@ const routesMiddlewares = (app) => {
     app.use("/send-email", sendmail_1.default);
     app.use("/verify-email", verify_email_1.default);
     app.use("/auth/reset-password", resetPassword_1.default);
-    app.use('/search', search_1.default);
+    app.use("/search", search_1.default);
     app.use("/forgot-password", forgot_password_1.default);
     app.use(error_1.default);
 };
