@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
           path: {
             wildcard: "*",
           },
-          fuzzy: true,
+          fuzzy: {},
         },
       },
     },
