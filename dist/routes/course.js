@@ -19,13 +19,28 @@ const validateUpdateCourse_1 = __importDefault(require("../utils/course/validate
 const createCourse_1 = __importDefault(require("../utils/course/createCourse"));
 const courseAuth_1 = __importDefault(require("../middleware/courseAuth"));
 const validateId_1 = __importDefault(require("../middleware/validateId"));
+const joi_1 = __importDefault(require("joi"));
 const router = (0, express_1.Router)();
+const countValidation = (countPayload) => {
+    const count = joi_1.default.object({
+        count: joi_1.default.string().required(),
+    });
+    return count.validate(countPayload);
+};
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let courses = yield course_model_1.default.find();
-    if (courses) {
-        return res.send(courses);
+    let count = { count: req.query.count };
+    const { error } = countValidation(count);
+    if (!error) {
+        const limit = 20;
+        let courses = yield course_model_1.default.find()
+            .skip(Number(req.query.count) * limit)
+            .limit(limit);
+        if (courses) {
+            return res.send(courses);
+        }
+        return res.status(404).send({ message: "course not found" });
     }
-    return res.status(404).send({ message: "course not found" });
+    return res.status(404).send({ message: error.details[0].message });
 }));
 router.get("/:id", validateId_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let course = yield course_model_1.default.findById(req.params.id);

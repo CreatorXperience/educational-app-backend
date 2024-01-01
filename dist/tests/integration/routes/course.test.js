@@ -39,7 +39,7 @@ describe("/api/courses", () => {
     }));
     describe("GET /", () => {
         test("should retrieve all courses in the DB", () => __awaiter(void 0, void 0, void 0, function* () {
-            const response = yield (0, supertest_1.default)(index_1.app).get("/api/courses");
+            const response = yield (0, supertest_1.default)(index_1.app).get("/api/courses?count=0");
             courseId = response.body[0]._id;
             expect(response.status).toBe(200);
             expect(response.body.length).toBe(1);
