@@ -24,7 +24,6 @@ const validatePayload = (payload) => {
 };
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { count } = req.query;
-    console.log(count);
     let { error } = validatePayload(req.body);
     if (error) {
         return res.status(404).send(error.details[0].message);
@@ -38,14 +37,15 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     path: {
                         wildcard: "*",
                     },
+                    fuzzy: {},
                 },
             },
         },
         {
-            $skip: Number(count) * 5,
+            $skip: Number(count) * 6,
         },
         {
-            $limit: 2,
+            $limit: 6,
         },
     ];
     let course = yield course_model_1.default.aggregate(pipeline, {

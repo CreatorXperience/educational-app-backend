@@ -34,13 +34,17 @@ describe("/api/courses", () => {
 
   describe("GET /", () => {
     test("should retrieve all courses in the DB", async () => {
-      const response = await request(app).get("/api/courses");
+      const response = await request(app).get("/api/courses?count=0");
       courseId = response.body[0]._id;
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(1);
       expect(
         response.body.some((res: TCourse) => res.author.name === "Adam Smith")
       ).toBeTruthy();
+    });
+    test("should return 404 error if not query parameter is provided", async () => {
+      const response = await request(app).get("/api/courses");
+      expect(response.status).toBe(404);
     });
   });
 

@@ -6,15 +6,33 @@ import validateUpdateCoursePayload from "../utils/course/validateUpdateCourse";
 import createCourse from "../utils/course/createCourse";
 import courseAuth from "../middleware/courseAuth";
 import validateId from "../middleware/validateId";
+import Joi from "joi";
 
 const router = Router();
 
+const countValidation = (countPayload: { count: string }) => {
+  const count = Joi.object({
+    count: Joi.string().required(),
+  });
+
+  return count.validate(countPayload);
+};
+
 router.get("/", async (req, res) => {
-  let courses = await CourseModel.find();
-  if (courses) {
-    return res.send(courses);
+  let count = { count: req.query.count as string };
+  const { error } = countValidation(count);
+  if (!error) {
+    const limit = 20;
+    let courses = await CourseModel.find()
+      .skip(Number(req.query.count) * limit)
+      .limit(limit);
+    if (courses) {
+      return res.send(courses);
+    }
+    return res.status(404).send({ message: "course not found" });
   }
-  return res.status(404).send({ message: "course not found" });
+
+  return res.status(404).send({ message: error.details[0].message });
 });
 
 router.get("/:id", validateId, async (req, res) => {
