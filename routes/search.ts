@@ -32,10 +32,10 @@ router.post("/", async (req, res) => {
       },
     },
     {
-      $skip: Number(count) * 2,
+      $skip: Number(count) * 6,
     },
     {
-      $limit: 2,
+      $limit: 6,
     },
   ];
 
